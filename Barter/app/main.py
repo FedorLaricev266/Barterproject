@@ -1,92 +1,67 @@
-from fastapi import FastAPI, Form, Query
+from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 import uvicorn
+import os
 
 app = FastAPI()
 
+# Настройка папки с шаблонами
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
+templates = Jinja2Templates(directory=TEMPLATES_DIR)
+
 # --- ГЛАВНАЯ СТРАНИЦА --- #
 @app.get("/", response_class=HTMLResponse)
-async def home():
-    return """
-        <h1>Добро пожаловать на сайт бартерного обмена!</h1>
-        <a href="/addoffer">Добавить объявление</a><br>
-        <a href="/offer">Посмотреть все объявления</a>
-    """
+async def home(request: Request):
+    return templates.TemplateResponse("home.html", {"request": request})
 
 # --- СТРАНИЦА ДОБАВЛЕНИЯ --- #
 @app.get("/addoffer", response_class=HTMLResponse)
-async def addoffer_form():
-    return """
-    <html>
-        <head><title>Добавить объявление</title></head>
-        <body>
-            <h2>Добавить объявление</h2>
-            <form action="/addoffer" method="post">
-                <label>Что вы хотите поменять:</label><br>
-                <input type="text" name="give" required><br><br>
-
-                <label>Что вы хотите получить:</label><br>
-                <input type="text" name="get" required><br><br>
-                                
-                <label>Контакты для связи:</label><br>
-                <input type="text" name="contact" required><br><br>
-
-                <button type="submit">Добавить</button>
-            </form>
-            <br>
-            <a href="/">⬅ Назад на главную</a>
-        </body>
-    </html>
-    """
+async def addoffer_form(request: Request):
+    return templates.TemplateResponse("addoffer.html", {"request": request})
 
 # --- ОБРАБОТКА ФОРМЫ --- #
 @app.post("/addoffer", response_class=HTMLResponse)
 async def addoffer_submit(
+    request: Request,
     give: str = Form(...),
     get: str = Form(...),
     contact: str = Form(...)
 ):
-    # Данные не сохраняются — просто отображаем пользователю
-    return f"""
-    <html>
-        <head><title>Объявление добавлено</title></head>
-        <body>
-            <h2>Ваше объявление принято!</h2>
-            <p><b>Отдаёте:</b> {give}</p>
-            <p><b>Получаете:</b> {get}</p>
-            <p><b>Ваши контакты:</b> {contact}</p>
-            <br>
-            <a href="/offer">Посмотреть все объявления</a><br>
-            <a href="/">⬅ На главную</a>
-        </body>
-    </html>
-    """
+    # Передаем данные в шаблон
+    context = {
+        "request": request,
+        "give": give,
+        "get": get,
+        "contact": contact
+    }
+    return templates.TemplateResponse("offer_added.html", context)
 
 # --- СТРАНИЦА СО ВСЕМИ ОБЪЯВЛЕНИЯМИ --- #
 @app.get("/offer", response_class=HTMLResponse)
-async def offer_list(q: str = Query(None, description="Поисковый запрос")):
-    # Так как мы ничего не храним — всегда показываем сообщение:
-    return """
-    <html>
-        <head><title>Все объявления</title></head>
-        <body>
-            <h2>Список объявлений</h2>
-            <p>Пока что объявлений нет 😔</p>
-            <a href="/addoffer">Добавить новое объявление</a><br>
-            <a href="/">⬅ На главную</a>
-        </body>
-    </html>
-    """
+async def offer_list(request: Request):
+    return templates.TemplateResponse("offer_list.html", {"request": request})
 
-# --- ПРОФИЛЬ (пример статического ответа) --- #
-@app.get("/profile")
-async def get_profile():
+# --- ПРОФИЛЬ --- #
+@app.get("/profile", response_class=HTMLResponse)
+async def get_profile(request: Request):
     profile_data = {
-        "username": "user123",
-        "email": "user123@example.com",
-        "offers_count": 0
+        "request": request,
+        "username": "Jr.Larzyk",
+        "email": "fedorlaricev6@gmail.com",
+        "full_name": "Ларичев Фёдор",
+        "phone": "+7 (969)735 62-37",
+        "registration_date": "20.09.2025",
+        "offers_count": 3,
+        "successful_exchanges": 2,
+        "rating": 5,
+        "active_offers": [
+            {"give": "Книги по программированию", "get": "Настольные игры"},
+            {"give": "Гитара", "get": "Велосипед"}
+        ]
     }
-    return profile_data
+    return templates.TemplateResponse("profile.html", profile_data)
 
 # --- ЗАПУСК СЕРВЕРА --- #
 if __name__ == "__main__":

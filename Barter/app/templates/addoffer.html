@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить объявление{% endblock %}
+
+{% block content %}
+<h2>Добавить объявление</h2>
+<form action="/addoffer" method="post">
+    <div style="margin-bottom: 15px;">
+        <label for="give"><strong>Что вы хотите поменять:</strong></label><br>
+        <input type="text" id="give" name="give" required style="width: 300px; padding: 8px;">
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <label for="get"><strong>Что вы хотите получить:</strong></label><br>
+        <input type="text" id="get" name="get" required style="width: 300px; padding: 8px;">
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <label for="contact"><strong>Контакты для связи:</strong></label><br>
+        <input type="text" id="contact" name="contact" required style="width: 300px; padding: 8px;">
+        <br><small>Телефон, email или мессенджер</small>
+    </div>
+
+    <button type="submit" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        Добавить объявление
+    </button>
+</form>
+
+<div style="margin-top: 20px;">
+    <a href="/">← На главную</a>
+</div>
+{% endblock %}
