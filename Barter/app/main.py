@@ -2,9 +2,7 @@ from fastapi import FastAPI, Form, Query
 from fastapi.responses import HTMLResponse
 import uvicorn
 
-
 app = FastAPI()
-
 
 # --- ГЛАВНАЯ СТРАНИЦА --- #
 @app.get("/", response_class=HTMLResponse)
@@ -53,11 +51,7 @@ async def addoffer_submit(
     <html>
         <head><title>Объявление добавлено</title></head>
         <body>
-<<<<<<< HEAD
             <h2>Ваше объявление принято!</h2>
-=======
-            <h2>Ваше объявление добавлено!</h2>
->>>>>>> 3731328936c911b34ef72ea35a5f5943f2254b5f
             <p><b>Отдаёте:</b> {give}</p>
             <p><b>Получаете:</b> {get}</p>
             <p><b>Ваши контакты:</b> {contact}</p>
@@ -71,7 +65,6 @@ async def addoffer_submit(
 # --- СТРАНИЦА СО ВСЕМИ ОБЪЯВЛЕНИЯМИ --- #
 @app.get("/offer", response_class=HTMLResponse)
 async def offer_list(q: str = Query(None, description="Поисковый запрос")):
-<<<<<<< HEAD
     # Так как мы ничего не храним — всегда показываем сообщение:
     return """
     <html>
@@ -82,54 +75,12 @@ async def offer_list(q: str = Query(None, description="Поисковый зап
             <a href="/addoffer">Добавить новое объявление</a><br>
             <a href="/">⬅ На главную</a>
         </body>
-=======
-    if q:
-        filtered_offers = [
-            offer for offer in offers
-            if q.lower() in offer["give"].lower()
-            or q.lower() in offer["get"].lower()
-            or q.lower() in offer["contact"].lower()
-        ]
-    else:
-        filtered_offers = offers
-
-    if not filtered_offers:
-        content = "<p>Ничего не найдено 😔</p>"
-    else:
-        content = "<h3>Список объявлений:</h3>"
-        for offer in filtered_offers:
-            content += f"""
-            <div style='border:1px solid #ccc; padding:10px; margin:10px; border-radius:8px;'>
-                <p><b>Отдаёт:</b> {offer['give']}</p>
-                <p><b>Хочет получить:</b> {offer['get']}</p>
-                <p><b>Контакт:</b> {offer['contact']}</p>
-            </div>
-            """
-
-    return f"""
-    <html>
-        <head><title>Все объявления</title></head>
-        <body>
-            <h2>Все предложения пользователей</h2>
-
-            <form method="get" action="/offer">
-                <input type="text" name="q" placeholder="Поиск..." value="{q or ''}">
-                <button type="submit"> Найти</button>
-            </form>
-<br>
-            {content}
-            <br>
-            <a href="/addoffer">Добавить новое объявление</a><br>
-            <a href="/">⬅ На главную</a>
-        </body> 
->>>>>>> 3731328936c911b34ef72ea35a5f5943f2254b5f
     </html>
     """
 
 # --- ПРОФИЛЬ (пример статического ответа) --- #
 @app.get("/profile")
 async def get_profile():
-    
     profile_data = {
         "username": "user123",
         "email": "user123@example.com",
@@ -138,5 +89,5 @@ async def get_profile():
     return profile_data
 
 # --- ЗАПУСК СЕРВЕРА --- #
-if name == "main":
+if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
