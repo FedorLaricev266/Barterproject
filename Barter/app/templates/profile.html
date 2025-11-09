@@ -10,14 +10,14 @@
             <span style="color: white; font-size: 24px;">👤</span>
         </div>
         <div>
-            <h1 style="margin: 0; color: #333;">{{ full_name }}</h1>
-            <p style="margin: 5px 0; color: #666;">@{{ username }}</p>
+            <h1 style="margin: 0; color: #333;">{{ user.full_name }}</h1>
+            <p style="margin: 5px 0; color: #666;">@{{ user.username }}</p>
             <div style="display: flex; align-items: center; gap: 15px; margin-top: 10px;">
                 <span style="background: #28a745; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">
-                    ★ {{ rating }}
+                    ★ {{ user.rating }}
                 </span>
                 <span style="color: #6c757d; font-size: 14px;">
-                    На сайте с {{ registration_date }}
+                    На сайте с {{ user.registration_date.strftime("%d.%m.%Y") }}
                 </span>
             </div>
         </div>
@@ -26,11 +26,11 @@
     <!-- Статистика -->
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
         <div style="background: #e7f3ff; padding: 20px; border-radius: 8px; text-align: center;">
-            <div style="font-size: 24px; font-weight: bold; color: #007bff;">{{ offers_count }}</div>
+            <div style="font-size: 24px; font-weight: bold; color: #007bff;">{{ user.offers|length }}</div>
             <div style="color: #666;">Объявлений</div>
         </div>
         <div style="background: #e7f3ff; padding: 20px; border-radius: 8px; text-align: center;">
-            <div style="font-size: 24px; font-weight: bold; color: #007bff;">{{ successful_exchanges }}</div>
+            <div style="font-size: 24px; font-weight: bold; color: #007bff;">0</div>
             <div style="color: #666;">Успешных обменов</div>
         </div>
     </div>
@@ -41,11 +41,11 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
             <div>
                 <strong>Email:</strong><br>
-                {{ email }}
+                {{ user.email }}
             </div>
             <div>
                 <strong>Телефон:</strong><br>
-                {{ phone }}
+                {{ user.phone }}
             </div>
         </div>
     </div>
@@ -54,8 +54,8 @@
     <div style="background: #fff; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px;">
         <h3 style="margin-top: 0; color: #333;">Активные объявления</h3>
         
-        {% if active_offers %}
-            {% for offer in active_offers %}
+        {% if user.offers %}
+            {% for offer in user.offers %}
             <div style="border: 1px solid #e9ecef; border-radius: 6px; padding: 15px; margin-bottom: 15px;">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div>
@@ -67,8 +67,11 @@
                         {{ offer.get }}
                     </div>
                 </div>
-                <div style="margin-top: 10px; text-align: right;">
-                    <small style="color: #6c757d;">Опубликовано 2 дня назад</small>
+                <div style="margin-top: 10px;">
+                    <strong>Контакт:</strong> {{ offer.contact }}
+                </div>
+                <div style="margin-top: 5px; text-align: right;">
+                    <small style="color: #6c757d;">Опубликовано {{ offer.id }} дней назад</small>
                 </div>
             </div>
             {% endfor %}

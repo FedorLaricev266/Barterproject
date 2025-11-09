@@ -5,19 +5,27 @@
 {% block content %}
 <h2>Список объявлений</h2>
 
-<div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0;">
-    <p>🔍 <strong>Внимание:</strong> В демо-версии объявления не сохраняются в базе данных.</p>
-    <p>При перезагрузке страницы список будет пустым.</p>
-</div>
-
-<div style="text-align: center; padding: 40px 0;">
-    <p style="font-size: 18px; color: #6c757d;">😔 Пока что объявлений нет</p>
-    <p>Будьте первым, кто добавит объявление!</p>
-    
-    <div style="margin-top: 30px;">
-        <a href="/addoffer" style="padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;">
-            Добавить объявление
-        </a>
+{% if offers %}
+    <ul style="list-style-type: none; padding: 0;">
+    {% for offer in offers %}
+        <li style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0;">
+            <strong>Отдаю:</strong> {{ offer.give }}<br>
+            <strong>Получаю:</strong> {{ offer.get }}<br>
+            <strong>Контакт:</strong> {{ offer.contact }}<br>
+            <strong>Пользователь:</strong> {{ offer.owner.username }}
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0;">
+        <p>🔍 <strong>Внимание:</strong> Пока что объявлений нет</p>
+        <p>Будьте первым, кто добавит объявление!</p>
     </div>
+{% endif %}
+
+<div style="margin-top: 30px;">
+    <a href="/addoffer" style="padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;">
+        Добавить объявление
+    </a>
 </div>
 {% endblock %}
