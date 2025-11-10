@@ -3,23 +3,25 @@
 {% block title %}Объявление добавлено{% endblock %}
 
 {% block content %}
-<div style="text-align: center; padding: 40px 0;">
-    <h2 style="color: #28a745;">✅ Ваше объявление принято!</h2>
+<div style="text-align: center; padding: 40px 20px;">
+    <div style="font-size: 64px; margin-bottom: 20px;">🎉</div>
+    <h2 style="color: #28a745;">✅ Объявление успешно добавлено!</h2>
     
-    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px auto; max-width: 500px;">
-        <p><strong>Отдаёте:</strong> {{ give }}</p>
-        <p><strong>Получаете:</strong> {{ get }}</p>
-        <p><strong>Ваши контакты:</strong> {{ contact }}</p>
+    <div style="background: #f8f9fa; padding: 25px; border-radius: 10px; margin: 30px auto; max-width: 500px; text-align: left;">
+        <h4 style="margin-top: 0; color: #333;">Ваше объявление:</h4>
+        <p><strong>📤 Отдаёте:</strong> {{ give }}</p>
+        <p><strong>📥 Получаете:</strong> {{ get }}</p>
+        <p><strong>📞 Контакты:</strong> {{ contact }}</p>
     </div>
 
-    <p>Теперь ваше объявление видят другие пользователи!</p>
+    <p style="font-size: 18px; color: #495057;">Теперь ваше объявление видят другие пользователи!</p>
     
-    <div style="margin-top: 30px;">
-        <a href="/offer" style="padding: 10px 20px; background: #28a745; color: white; text-decoration: none; border-radius: 5px; margin-right: 10px;">
-            Посмотреть все объявления
+    <div style="margin-top: 40px;">
+        <a href="/offer" style="padding: 12px 24px; background: #28a745; color: white; text-decoration: none; border-radius: 5px; margin-right: 15px;">
+            📋 Посмотреть все объявления
         </a>
-        <a href="/addoffer" style="padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;">
-            Добавить ещё
+        <a href="/addoffer" style="padding: 12px 24px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;">
+            ➕ Добавить ещё
         </a>
     </div>
 </div>

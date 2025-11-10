@@ -1,56 +1,83 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Бартерный обмен{% endblock %}</title>
+    <title>{% block title %}🤝 Бартерный обмен{% endblock %}</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            background: #f5f5f5;
             line-height: 1.6;
         }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
         header nav {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            padding: 15px 0;
         }
         header nav a {
-            margin: 0 10px;
+            margin: 0 15px;
             text-decoration: none;
-            color: #007bff;
+            color: #495057;
+            font-weight: 500;
+            transition: color 0.3s;
         }
         header nav a:hover {
-            text-decoration: underline;
+            color: #007bff;
+        }
+        header nav a:first-child {
+            margin-left: 0;
+        }
+        main {
+            min-height: 70vh;
         }
         footer {
-            margin-top: 40px;
-            text-align: center;
-            color: #6c757d;
+            background: #343a40;
+            color: white;
+            padding: 30px 0;
+            margin-top: 50px;
+        }
+        .content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body>
     <header>
-        <nav>
-            <a href="/">🏠 Главная</a> |
-            <a href="/addoffer">📝 Добавить объявление</a> |
-            <a href="/offer">📋 Все объявления</a> |
-            <a href="/profile">👤 Профиль</a>
-        </nav>
-        <hr>
+        <div class="container">
+            <nav>
+                <a href="/">🏠 Главная</a>
+                <a href="/addoffer">📝 Добавить объявление</a>
+                <a href="/offer">📋 Все объявления</a>
+                <a href="/profile">👤 Профиль</a>
+            </nav>
+        </div>
     </header>
     
-    <main>
-        {% block content %}{% endblock %}
+    <main class="container">
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
     </main>
     
     <footer>
-        <hr>
-        <p>&copy; 2025 Школьный проект, по всем вопросам telegramm:@Larchikof</p>
+        <div class="container" style="text-align: center;">
+            <p>&copy; 2025 Школьный проект "Бартерный обмен"</p>
+            <p>По всем вопросам: Telegram @Larchikof</p>
+        </div>
     </footer>
 </body>
 </html>

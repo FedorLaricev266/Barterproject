@@ -10,14 +10,14 @@
             <span style="color: white; font-size: 24px;">👤</span>
         </div>
         <div>
-            <h1 style="margin: 0; color: #333;">{{ user.full_name }}</h1>
-            <p style="margin: 5px 0; color: #666;">@{{ user.username }}</p>
+            <h1 style="margin: 0; color: #333;">{{ full_name }}</h1>
+            <p style="margin: 5px 0; color: #666;">@{{ username }}</p>
             <div style="display: flex; align-items: center; gap: 15px; margin-top: 10px;">
                 <span style="background: #28a745; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">
-                    ★ {{ user.rating }}
+                    ★ {{ rating }}
                 </span>
                 <span style="color: #6c757d; font-size: 14px;">
-                    На сайте с {{ user.registration_date.strftime("%d.%m.%Y") }}
+                    На сайте с {{ registration_date }}
                 </span>
             </div>
         </div>
@@ -26,12 +26,16 @@
     <!-- Статистика -->
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
         <div style="background: #e7f3ff; padding: 20px; border-radius: 8px; text-align: center;">
-            <div style="font-size: 24px; font-weight: bold; color: #007bff;">{{ user.offers|length }}</div>
+            <div style="font-size: 24px; font-weight: bold; color: #007bff;">{{ offers_count }}</div>
             <div style="color: #666;">Объявлений</div>
         </div>
         <div style="background: #e7f3ff; padding: 20px; border-radius: 8px; text-align: center;">
-            <div style="font-size: 24px; font-weight: bold; color: #007bff;">0</div>
+            <div style="font-size: 24px; font-weight: bold; color: #007bff;">{{ successful_exchanges }}</div>
             <div style="color: #666;">Успешных обменов</div>
+        </div>
+        <div style="background: #e7f3ff; padding: 20px; border-radius: 8px; text-align: center;">
+            <div style="font-size: 24px; font-weight: bold; color: #007bff;">{{ rating }}</div>
+            <div style="color: #666;">Рейтинг</div>
         </div>
     </div>
 
@@ -40,49 +44,44 @@
         <h3 style="margin-top: 0; color: #333;">Контактная информация</h3>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
             <div>
-                <strong>Email:</strong><br>
-                {{ user.email }}
+                <strong>📧 Email:</strong><br>
+                {{ email }}
             </div>
             <div>
-                <strong>Телефон:</strong><br>
-                {{ user.phone }}
+                <strong>📞 Телефон:</strong><br>
+                {{ phone }}
             </div>
         </div>
     </div>
 
     <!-- Активные объявления -->
     <div style="background: #fff; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px;">
-        <h3 style="margin-top: 0; color: #333;">Активные объявления</h3>
+        <h3 style="margin-top: 0; color: #333;">📋 Активные объявления</h3>
         
-        {% if user.offers %}
-            {% for offer in user.offers %}
+        {% if active_offers %}
+            {% for offer in active_offers %}
             <div style="border: 1px solid #e9ecef; border-radius: 6px; padding: 15px; margin-bottom: 15px;">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div>
-                        <strong style="color: #dc3545;">Отдаю:</strong><br>
+                        <strong style="color: #dc3545;">📤 Отдаю:</strong><br>
                         {{ offer.give }}
                     </div>
                     <div>
-                        <strong style="color: #28a745;">Получаю:</strong><br>
-                        {{ offer.get }}
+                        <strong style="color: #28a745;">📥 Получаю:</strong><br>
+                        {{ offer['get'] }}
                     </div>
-                </div>
-                <div style="margin-top: 10px;">
-                    <strong>Контакт:</strong> {{ offer.contact }}
-                </div>
-                <div style="margin-top: 5px; text-align: right;">
-                    <small style="color: #6c757d;">Опубликовано {{ offer.id }} дней назад</small>
                 </div>
             </div>
             {% endfor %}
         {% else %}
-            <p style="color: #6c757d; text-align: center; padding: 20px;">
-                У вас пока нет активных объявлений
-            </p>
+            <div style="text-align: center; padding: 30px; color: #6c757d;">
+                <div style="font-size: 48px; margin-bottom: 15px;">📝</div>
+                <p>У вас пока нет активных объявлений</p>
+            </div>
         {% endif %}
 
         <div style="text-align: center; margin-top: 20px;">
-            <a href="/addoffer" style="padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;">
+            <a href="/addoffer" style="padding: 12px 24px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;">
                 📝 Добавить новое объявление
             </a>
         </div>
@@ -90,15 +89,12 @@
 
     <!-- Действия -->
     <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e9ecef;">
-        <a href="/offer" style="padding: 8px 16px; background: #6c757d; color: white; text-decoration: none; border-radius: 5px; margin-right: 10px;">
+        <a href="/offer" style="padding: 10px 20px; background: #6c757d; color: white; text-decoration: none; border-radius: 5px; margin-right: 10px;">
             📋 Все объявления
         </a>
-        <a href="/addoffer" style="padding: 8px 16px; background: #28a745; color: white; text-decoration: none; border-radius: 5px; margin-right: 10px;">
+        <a href="/addoffer" style="padding: 10px 20px; background: #28a745; color: white; text-decoration: none; border-radius: 5px;">
             ➕ Добавить объявление
         </a>
-        <button style="padding: 8px 16px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;">
-            ✏️ Редактировать профиль
-        </button>
     </div>
 </div>
 {% endblock %}

@@ -6,26 +6,47 @@
 <h2>Список объявлений</h2>
 
 {% if offers %}
-    <ul style="list-style-type: none; padding: 0;">
+    <div style="display: grid; gap: 15px;">
     {% for offer in offers %}
-        <li style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0;">
-            <strong>Отдаю:</strong> {{ offer.give }}<br>
-            <strong>Получаю:</strong> {{ offer.get }}<br>
-            <strong>Контакт:</strong> {{ offer.contact }}<br>
-            <strong>Пользователь:</strong> {{ offer.owner.username }}
-        </li>
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #007bff;">
+            <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 10px;">
+                <h3 style="margin: 0; color: #333;">От: {{ offer.username }}</h3>
+                <small style="color: #6c757d;">{{ offer.created_at.strftime('%d.%m.%Y %H:%M') }}</small>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px;">
+                <div>
+                    <strong style="color: #dc3545;">📤 Отдаю:</strong><br>
+                    {{ offer.give }}
+                </div>
+                <div>
+                    <strong style="color: #28a745;">📥 Получаю:</strong><br>
+                    {{ offer['get'] }}
+                </div>
+            </div>
+            
+            <div style="background: white; padding: 10px; border-radius: 5px;">
+                <strong>📞 Контакты:</strong> {{ offer.contact }}
+            </div>
+        </div>
     {% endfor %}
-    </ul>
+    </div>
 {% else %}
-    <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0;">
-        <p>🔍 <strong>Внимание:</strong> Пока что объявлений нет</p>
+    <div style="text-align: center; padding: 40px 20px;">
+        <div style="font-size: 48px; margin-bottom: 20px;">🔍</div>
+        <h3 style="color: #6c757d;">Объявлений пока нет</h3>
         <p>Будьте первым, кто добавит объявление!</p>
+        <a href="/addoffer" style="display: inline-block; padding: 12px 24px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; margin-top: 15px;">
+            Добавить первое объявление
+        </a>
     </div>
 {% endif %}
 
-<div style="margin-top: 30px;">
-    <a href="/addoffer" style="padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;">
-        Добавить объявление
+{% if offers %}
+<div style="text-align: center; margin-top: 30px;">
+    <a href="/addoffer" style="padding: 12px 24px; background: #28a745; color: white; text-decoration: none; border-radius: 5px;">
+        ➕ Добавить своё объявление
     </a>
 </div>
+{% endif %}
 {% endblock %}
