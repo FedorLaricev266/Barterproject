@@ -29,14 +29,20 @@ async def addoffer_submit(
     request: Request,
     give: str = Form(...),
     get: str = Form(...),
-    contact: str = Form(...)
+    contact: str = Form(...),
+    category: str = Form(None),  # новые поля
+    city: str = Form(None),      # новые поля
+    district: str = Form(None)   # новые поля
 ):
     try:
-        # Сохраняем объявление в базу данных
-        user_id = 1 
+        user_id = 1
         
-        query = "INSERT INTO offers (user_id, give, `get`, contact) VALUES (%s, %s, %s, %s)"
-        result = db.execute_query(query, (user_id, give, get, contact))
+        # Обновленный запрос с новыми полями
+        query = """
+        INSERT INTO offers (user_id, give, `get`, contact, category, city, district) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """
+        result = db.execute_query(query, (user_id, give, get, contact, category, city, district))
         
         print(f"✅ Объявление добавлено: {give} -> {get}")
         
@@ -44,7 +50,10 @@ async def addoffer_submit(
             "request": request,
             "give": give,
             "get": get,
-            "contact": contact
+            "contact": contact,
+            "category": category,
+            "city": city,
+            "district": district
         }
         return templates.TemplateResponse("offer_added.html", context)
     
@@ -59,21 +68,45 @@ async def addoffer_submit(
 @app.get("/offer", response_class=HTMLResponse)
 async def offer_list(request: Request):
     try:
-        #все активные объявления из базы данных
+        # Получаем параметры фильтрации из URL
+        category = request.query_params.get('category', '')
+        city = request.query_params.get('city', '')
+        search = request.query_params.get('search', '')
+        
+        # Базовый запрос
         query = """
         SELECT o.*, u.username 
         FROM offers o 
         JOIN users u ON o.user_id = u.id 
-        WHERE o.is_active = TRUE 
-        ORDER BY o.created_at DESC
+        WHERE o.is_active = TRUE
         """
-        offers = db.execute_query(query, fetch=True)
+        params = []
         
-        print(f"✅ Найдено объявлений: {len(offers) if offers else 0}")
+        # Добавляем фильтры
+        if category:
+            query += " AND o.category = %s"
+            params.append(category)
+        
+        if city:
+            query += " AND o.city = %s"
+            params.append(city)
+            
+        if search:
+            query += " AND (o.give LIKE %s OR o.`get` LIKE %s OR u.username LIKE %s)"
+            params.extend([f"%{search}%", f"%{search}%", f"%{search}%"])
+        
+        # Сортировка
+        query += " ORDER BY o.created_at DESC"
+        
+        offers = db.execute_query(query, params, fetch=True) or []
         
         context = {
             "request": request,
-            "offers": offers or []
+            "offers": offers,
+            "current_category": category,
+            "current_city": city,
+            "current_search": search,
+            "offers_count": len(offers)
         }
         return templates.TemplateResponse("offer_list.html", context)
     
@@ -83,7 +116,6 @@ async def offer_list(request: Request):
             "request": request, 
             "error": f"Ошибка загрузки объявлений: {str(e)}"
         })
-
 #ПРОФИЛЬ
 @app.get("/profile", response_class=HTMLResponse)
 async def get_profile(request: Request):
@@ -120,7 +152,7 @@ async def get_profile(request: Request):
             "registration_date": user['registration_date'].strftime("%d.%m.%Y"),
             "offers_count": offers_count,
             "successful_exchanges": 0,
-            "rating": 5,
+            "rating": "ещё нет оценок (бета)",
             "active_offers": active_offers
         }
         return templates.TemplateResponse("profile.html", profile_data)
@@ -131,8 +163,45 @@ async def get_profile(request: Request):
             "error": f"Ошибка загрузки профиля: {str(e)}"
         })
 
+#Страница конкретного обьявления 
+@app.get("/offer/{id}", response_class=HTMLResponse)
+async def offercard(request: Request, id: int):
+    try:
+        # Получаем данные объявления из базы данных
+        query = """
+        SELECT o.*, u.username, u.email, u.phone 
+        FROM offers o 
+        JOIN users u ON o.user_id = u.id 
+        WHERE o.id = %s
+        """
+        offer_data = db.execute_query(query, (id,), fetch=True)
+        
+        if not offer_data:
+            return templates.TemplateResponse("error.html", {
+                "request": request, 
+                "error": f"Объявление с ID {id} не найдено"
+            })
+        
+        offer = offer_data[0]
+        
+        context = {
+            "request": request,
+            "offer": offer
+        }
+        return templates.TemplateResponse("offercard.html", context)
+    
+    except Exception as e:
+        return templates.TemplateResponse("error.html", {
+            "request": request, 
+            "error": f"Ошибка загрузки объявления: {str(e)}"
+        })
+# ЭНДПОИНТ МИНИ-ИГРЫ
+@app.get("/minigame", response_class=HTMLResponse)
+async def minigame(request: Request):
+    return templates.TemplateResponse("minigame.html", {"request": request})
+
 #ЗАПУСК СЕРВЕРА 
 if __name__ == "__main__":
     print("Запуск сервера...")
     print("Проверка подключения к БД...")
-    uvicorn.run(app, host="127.0.0.1", port=8000)  
+    uvicorn.run(app, host="127.0.0.1", port=8000)

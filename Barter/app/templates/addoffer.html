@@ -1,32 +1,790 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить объявление | Swap Space</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #8b5cf6;
+            --secondary: #06d6a0;
+            --accent: #f59e0b;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --background: #ffffff;
+            --background-alt: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06d6a0 100%);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+        }
 
-{% block title %}Добавить объявление{% endblock %}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-{% block content %}
-<h2>Добавить объявление</h2>
-<form action="/addoffer" method="post">
-    <div style="margin-bottom: 15px;">
-        <label for="give"><strong>Что вы хотите поменять:</strong></label><br>
-        <input type="text" id="give" name="give" required style="width: 300px; padding: 8px;">
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--background-alt);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .form-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-subtitle {
+            color: var(--text-light);
+            font-size: 1.2rem;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 3rem;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+
+        .form-label i {
+            color: var(--primary);
+            width: 20px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 1.2rem 1.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: white;
+            font-family: inherit;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364708b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.2rem;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-input:hover, .form-select:hover {
+            border-color: #cbd5e1;
+        }
+
+        .form-hint {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Category and City Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Category Tags */
+        .category-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .category-tag {
+            padding: 0.6rem 1.2rem;
+            background: var(--background-alt);
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .category-tag:hover {
+            border-color: var(--primary-light);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .category-tag.active {
+            background: var(--gradient);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Exchange Visualization */
+        .exchange-visual {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: var(--background-alt);
+            border-radius: 12px;
+            border: 2px dashed #e2e8f0;
+        }
+
+        .exchange-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .exchange-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            margin: 0 auto 1rem;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .exchange-label {
+            font-weight: 700;
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .exchange-arrow {
+            color: var(--primary);
+            font-size: 2rem;
+            animation: pulse 2s infinite;
+        }
+
+        /* Submit Button */
+        .submit-section {
+            text-align: center;
+            margin-top: 2.5rem;
+        }
+
+        .submit-button {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 1.3rem 3rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        .submit-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(99, 102, 241, 0.4);
+        }
+
+        .submit-button:active {
+            transform: translateY(-1px);
+        }
+
+        .submit-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Tips Section */
+        .tips-section {
+            background: var(--background-alt);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 3rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .tips-title {
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .tips-list {
+            list-style: none;
+            display: grid;
+            gap: 0.8rem;
+        }
+
+        .tip-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .tip-item i {
+            color: var(--secondary);
+            margin-top: 0.2rem;
+            flex-shrink: 0;
+        }
+
+        /* Back Link */
+        .back-link {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.8rem 1.5rem;
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+
+        .back-button:hover {
+            color: var(--primary);
+            background: white;
+            box-shadow: var(--shadow);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .form-container {
+                max-width: 100%;
+            }
+
+            .form-card {
+                padding: 2rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .exchange-visual {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .exchange-arrow {
+                transform: rotate(90deg);
+            }
+
+            .exchange-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+
+            .category-tags {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-card {
+                padding: 1.5rem;
+            }
+
+            .page-title {
+                font-size: 1.8rem;
+            }
+
+            .form-input, .form-select {
+                padding: 1rem 1.2rem;
+            }
+
+            .submit-button {
+                padding: 1.1rem 2rem;
+                font-size: 1rem;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .category-tag {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <!-- Page Header -->
+        <div class="page-header fade-in">
+            <h1 class="page-title">Добавить объявление</h1>
+            <p class="page-subtitle">Создайте предложение для взаимовыгодного обмена</p>
+        </div>
+
+        <!-- Form Card -->
+        <form action="/addoffer" method="post" class="form-card fade-in">
+            <!-- Category Selection -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-tags"></i>
+                    Категория объявления
+                </label>
+                <div class="category-tags">
+                    <div class="category-tag" data-category="books">
+                        <i class="fas fa-book"></i>
+                        Книги
+                    </div>
+                    <div class="category-tag" data-category="electronics">
+                        <i class="fas fa-laptop"></i>
+                        Электроника
+                    </div>
+                    <div class="category-tag" data-category="clothes">
+                        <i class="fas fa-tshirt"></i>
+                        Одежда
+                    </div>
+                    <div class="category-tag" data-category="furniture">
+                        <i class="fas fa-couch"></i>
+                        Мебель
+                    </div>
+                    <div class="category-tag" data-category="sports">
+                        <i class="fas fa-dumbbell"></i>
+                        Спорт
+                    </div>
+                    <div class="category-tag" data-category="hobby">
+                        <i class="fas fa-paint-brush"></i>
+                        Хобби
+                    </div>
+                    <div class="category-tag" data-category="services">
+                        <i class="fas fa-tools"></i>
+                        Услуги
+                    </div>
+                    <div class="category-tag" data-category="other">
+                        <i class="fas fa-ellipsis-h"></i>
+                        Другое
+                    </div>
+                </div>
+                <input type="hidden" id="category" name="category" required>
+                <div class="form-hint">
+                    <i class="fas fa-lightbulb"></i>
+                    Выберите наиболее подходящую категорию для вашего объявления
+                </div>
+            </div>
+
+            <!-- City Selection -->
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Город
+                    </label>
+                    <select id="city" name="city" class="form-select" required>
+                        <option value="">Выберите город</option>
+                        <option value="moscow">Москва</option>
+                        <option value="spb">Санкт-Петербург</option>
+                        <option value="ekb">Екатеринбург</option>
+                        <option value="nnov">Нижний Новгород</option>
+                        <option value="kazan">Казань</option>
+                        <option value="novosibirsk">Новосибирск</option>
+                        <option value="krasnodar">Краснодар</option>
+                        <option value="vladivostok">Владивосток</option>
+                        <option value="other">Другой город</option>
+                    </select>
+                    <div class="form-hint">
+                        <i class="fas fa-lightbulb"></i>
+                        Укажите город для локального поиска
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-map-pin"></i>
+                        Район (опционально)
+                    </label>
+                    <input 
+                        type="text" 
+                        id="district" 
+                        name="district" 
+                        class="form-input" 
+                        placeholder="Например: Центральный район"
+                    >
+                    <div class="form-hint">
+                        <i class="fas fa-lightbulb"></i>
+                        Уточните район для удобства встречи
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exchange Visualization -->
+            <div class="exchange-visual">
+                <div class="exchange-item">
+                    <div class="exchange-icon">
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                    <div class="exchange-label">Отдаю</div>
+                </div>
+                
+                <div class="exchange-arrow">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                
+                <div class="exchange-item">
+                    <div class="exchange-icon">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+                    <div class="exchange-label">Получаю</div>
+                </div>
+            </div>
+
+            <!-- Give Input -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-arrow-up"></i>
+                    Что вы хотите поменять
+                </label>
+                <input 
+                    type="text" 
+                    id="give" 
+                    name="give" 
+                    class="form-input" 
+                    placeholder="Например: Книги Стивена Кинга, настольная игра Монополия"
+                    required
+                >
+                <div class="form-hint">
+                    <i class="fas fa-lightbulb"></i>
+                    Опишите предмет или услугу, которую готовы предложить
+                </div>
+            </div>
+
+            <!-- Get Input -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-arrow-down"></i>
+                    Что вы хотите получить
+                </label>
+                <input 
+                    type="text" 
+                    id="get" 
+                    name="get" 
+                    class="form-input" 
+                    placeholder="Например: Комнатные растения, услуги фотографа"
+                    required
+                >
+                <div class="form-hint">
+                    <i class="fas fa-lightbulb"></i>
+                    Опишите, что хотели бы получить взамен
+                </div>
+            </div>
+
+            <!-- Contact Input -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-comments"></i>
+                    Контакты для связи
+                </label>
+                <input 
+                    type="text" 
+                    id="contact" 
+                    name="contact" 
+                    class="form-input" 
+                    placeholder="Телефон, email или мессенджер"
+                    required
+                >
+                <div class="form-hint">
+                    <i class="fas fa-shield-alt"></i>
+                    Эта информация будет видна только зарегистрированным пользователям
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="submit-section">
+                <button type="submit" class="submit-button" id="submitButton">
+                    <i class="fas fa-plus"></i>
+                    Добавить объявление
+                </button>
+            </div>
+        </form>
+
+        <!-- Tips Section -->
+        <div class="tips-section fade-in">
+            <h3 class="tips-title">
+                <i class="fas fa-graduation-cap"></i>
+                Советы для успешного обмена
+            </h3>
+            <ul class="tips-list">
+                <li class="tip-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Будьте конкретны в описании товаров или услуг</span>
+                </li>
+                <li class="tip-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Указывайте реальные контакты для быстрой связи</span>
+                </li>
+                <li class="tip-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Рассматривайте разные варианты обмена</span>
+                </li>
+                <li class="tip-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Отвечайте на предложения оперативно</span>
+                </li>
+                <li class="tip-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Указывайте правильную категорию для лучшего поиска</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Back Link -->
+        <div class="back-link fade-in">
+            <a href="/" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                На главную
+            </a>
+        </div>
     </div>
 
-    <div style="margin-bottom: 15px;">
-        <label for="get"><strong>Что вы хотите получить:</strong></label><br>
-        <input type="text" id="get" name="get" required style="width: 300px; padding: 8px;">
-    </div>
+    <script>
+        // Add fade-in animation
+        const fadeElements = document.querySelectorAll('.fade-in');
+        
+        const fadeInOnScroll = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        fadeElements.forEach(el => {
+            el.style.opacity = 0;
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            fadeInOnScroll.observe(el);
+        });
 
-    <div style="margin-bottom: 15px;">
-        <label for="contact"><strong>Контакты для связи:</strong></label><br>
-        <input type="text" id="contact" name="contact" required style="width: 300px; padding: 8px;">
-        <br><small>Телефон, email или мессенджер</small>
-    </div>
+        // Category selection
+        const categoryTags = document.querySelectorAll('.category-tag');
+        const categoryInput = document.getElementById('category');
+        const submitButton = document.getElementById('submitButton');
 
-    <button type="submit" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
-        Добавить объявление
-    </button>
-</form>
+        categoryTags.forEach(tag => {
+            tag.addEventListener('click', function() {
+                // Remove active class from all tags
+                categoryTags.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tag
+                this.classList.add('active');
+                
+                // Set hidden input value
+                categoryInput.value = this.getAttribute('data-category');
+                
+                updateSubmitButton();
+            });
+        });
 
-<div style="margin-top: 20px;">
-    <a href="/">← На главную</a>
-</div>
-{% endblock %}
+        // City selection enhancement
+        const citySelect = document.getElementById('city');
+        
+        citySelect.addEventListener('change', function() {
+            if (this.value) {
+                this.style.borderColor = '#06d6a0';
+            }
+            updateSubmitButton();
+        });
+
+        // Form validation and enhancement
+        const form = document.querySelector('form');
+        const inputs = document.querySelectorAll('.form-input, .form-select');
+
+        inputs.forEach(input => {
+            // Add focus effects
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateY(-2px)';
+            });
+
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateY(0)';
+            });
+
+            // Real-time validation
+            input.addEventListener('input', function() {
+                if (this.value.trim().length > 0 && this.checkValidity()) {
+                    this.style.borderColor = '#06d6a0';
+                } else {
+                    this.style.borderColor = '#e2e8f0';
+                }
+                updateSubmitButton();
+            });
+        });
+
+        // Update submit button state
+        function updateSubmitButton() {
+            const requiredFields = [
+                categoryInput.value,
+                citySelect.value,
+                document.getElementById('give').value,
+                document.getElementById('get').value,
+                document.getElementById('contact').value
+            ];
+
+            const allFilled = requiredFields.every(field => field.trim().length > 0);
+            
+            if (allFilled) {
+                submitButton.disabled = false;
+                submitButton.style.opacity = '1';
+            } else {
+                submitButton.disabled = true;
+                submitButton.style.opacity = '0.6';
+            }
+        }
+
+        // Form submission enhancement
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+            
+            // Check required fields
+            const requiredFields = [
+                { element: categoryInput, name: 'категория' },
+                { element: citySelect, name: 'город' },
+                { element: document.getElementById('give'), name: 'что отдаете' },
+                { element: document.getElementById('get'), name: 'что получаете' },
+                { element: document.getElementById('contact'), name: 'контакты' }
+            ];
+
+            requiredFields.forEach(field => {
+                if (!field.element.value.trim()) {
+                    field.element.style.borderColor = '#ef4444';
+                    isValid = false;
+                    
+                    // Add shake animation to invalid fields
+                    if (field.element.style.animation) {
+                        field.element.style.animation = '';
+                    }
+                    setTimeout(() => {
+                        field.element.style.animation = 'shake 0.5s ease-in-out';
+                    }, 10);
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+                // Show error message
+                alert('Пожалуйста, заполните все обязательные поля');
+            } else {
+                // Show success animation before submit
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Добавляем...';
+                submitButton.disabled = true;
+            }
+        });
+
+        // Add shake animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize submit button state
+        updateSubmitButton();
+    </script>
+</body>
+</html>

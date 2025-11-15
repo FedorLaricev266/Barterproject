@@ -33,7 +33,7 @@
             transition: color 0.3s;
         }
         header nav a:hover {
-            color: #007bff;
+            color:#96CEB4;
         }
         header nav a:first-child {
             margin-left: 0;
@@ -76,8 +76,32 @@
     <footer>
         <div class="container" style="text-align: center;">
             <p>&copy; 2025 Школьный проект "Бартерный обмен"</p>
-            <p>По всем вопросам: Telegram @Larchikof</p>
+            <p>По всем вопросам: <a href="#" id="telegram-link">Telegram @Larchikof</a></p>
         </div>
     </footer>
+
+    <script>
+        // Переменная для отслеживания количества кликов
+        let clickCount = 0;
+        const requiredClicks = 10;
+        
+        // Получаем элемент ссылки
+        const telegramLink = document.getElementById('telegram-link');
+        
+        // Обработчик клика по ссылке Telegram
+        telegramLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            clickCount++;
+            
+            // Проверяем, достигли ли мы нужного количества кликов
+            if (clickCount >= requiredClicks) {
+                // Перенаправляем на страницу мини-игры
+                window.location.href = '/minigame';
+                // Сбрасываем счетчик
+                clickCount = 0;
+            }
+        });
+    </script>
 </body>
 </html>
