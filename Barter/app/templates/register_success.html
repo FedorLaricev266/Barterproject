@@ -3,41 +3,515 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Регистрация выполнена</title>
+    <title>Регистрация выполнена | Swap Space</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #8b5cf6;
+            --secondary: #06d6a0;
+            --accent: #f59e0b;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --background: #ffffff;
+            --background-alt: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06d6a0 100%);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            max-width: 400px;
-            margin: 50px auto;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--background-alt);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
+        }
+
+        .success-container {
+            max-width: 500px;
+            width: 100%;
             text-align: center;
         }
-        .success-message {
-            background: #d4edda;
-            color: #155724;
-            padding: 20px;
-            border-radius: 5px;
-            border: 1px solid #c3e6cb;
+
+        /* Success Animation */
+        .success-animation {
+            margin-bottom: 2rem;
         }
-        a {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background:#96CEB4;
+
+        .success-icon {
+            width: 120px;
+            height: 120px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            position: relative;
+            animation: successPulse 2s ease-in-out infinite;
+            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.3);
+        }
+
+        .success-icon i {
+            font-size: 3rem;
             color: white;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .confetti-item {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--gradient);
+            border-radius: 1px;
+            animation: confettiFall 3s ease-in-out infinite;
+        }
+
+        .confetti-item:nth-child(1) { top: -10px; left: 20%; animation-delay: 0s; }
+        .confetti-item:nth-child(2) { top: -10px; left: 40%; animation-delay: 0.5s; }
+        .confetti-item:nth-child(3) { top: -10px; left: 60%; animation-delay: 1s; }
+        .confetti-item:nth-child(4) { top: -10px; left: 80%; animation-delay: 1.5s; }
+        .confetti-item:nth-child(5) { top: -10px; left: 30%; animation-delay: 0.2s; }
+        .confetti-item:nth-child(6) { top: -10px; left: 70%; animation-delay: 0.8s; }
+
+        /* Success Content */
+        .success-content {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 3rem 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        .success-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .success-subtitle {
+            color: var(--text-light);
+            font-size: 1.2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        /* User Info */
+        .user-info {
+            background: var(--background-alt);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .user-details {
+            text-align: center;
+        }
+
+        .username {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .user-email {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .welcome-message {
+            background: linear-gradient(135deg, #f0fdf4 0%, #bbf7d0 100%);
+            border: 1px solid #bbf7d0;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            color: #166534;
+        }
+
+        .message-icon {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+        }
+
+        /* Next Steps */
+        .next-steps {
+            margin-bottom: 2rem;
+        }
+
+        .steps-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .step-item {
+            background: white;
+            padding: 1.5rem 1rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+            border: 1px solid #e2e8f0;
+        }
+
+        .step-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-light);
+        }
+
+        .step-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            margin: 0 auto 0.8rem;
+        }
+
+        .step-text {
+            font-size: 0.9rem;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-button {
+            padding: 1.2rem 2.5rem;
+            border-radius: 50px;
             text-decoration: none;
-            border-radius: 5px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .action-secondary {
+            background: white;
+            color: var(--text);
+            border: 2px solid #e2e8f0;
+        }
+
+        .action-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-primary:hover {
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Animations */
+        @keyframes successPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes confettiFall {
+            0% { 
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% { 
+                transform: translateY(100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .success-container {
+                max-width: 100%;
+            }
+
+            .success-content {
+                padding: 2rem;
+            }
+
+            .success-title {
+                font-size: 1.8rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .action-button {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+
+            .steps-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .success-content {
+                padding: 1.5rem;
+            }
+
+            .success-title {
+                font-size: 1.6rem;
+            }
+
+            .success-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .success-icon {
+                width: 100px;
+                height: 100px;
+            }
+
+            .success-icon i {
+                font-size: 2.5rem;
+            }
+
+            .action-button {
+                padding: 1rem 2rem;
+                font-size: 1rem;
+            }
+
+            .user-avatar {
+                width: 60px;
+                height: 60px;
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="success-message">
-        <h2>Регистрация успешна!</h2>
-        <p>Аккаунт {{ username }} создан!</p>
-        <p>Email: {{ email }}</p>
-        <p>{{ message }}</p>
+    <div class="success-container">
+        <!-- Success Animation -->
+        <div class="success-animation fade-in">
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
+                <div class="confetti">
+                    <div class="confetti-item"></div>
+                    <div class="confetti-item"></div>
+                    <div class="confetti-item"></div>
+                    <div class="confetti-item"></div>
+                    <div class="confetti-item"></div>
+                    <div class="confetti-item"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Content -->
+        <div class="success-content fade-in">
+            <h1 class="success-title">Регистрация успешна!</h1>
+            <p class="success-subtitle">Добро пожаловать в сообщество Swap Space</p>
+
+            <!-- User Info -->
+            <div class="user-info">
+                <div class="user-avatar">
+                    {{ username[:2]|upper }}
+                </div>
+                <div class="user-details">
+                    <div class="username">{{ username }}</div>
+                    <div class="user-email">
+                        <i class="fas fa-envelope"></i>
+                        {{ email }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Welcome Message -->
+            {% if message %}
+            <div class="welcome-message">
+                <i class="fas fa-info-circle message-icon"></i>
+                {{ message }}
+            </div>
+            {% endif %}
+
+            <!-- Next Steps -->
+            <div class="next-steps">
+                <h4 class="steps-title">
+                    <i class="fas fa-rocket"></i>
+                    Что дальше?
+                </h4>
+                <div class="steps-grid">
+                    <div class="step-item">
+                        <div class="step-icon">
+                            <i class="fas fa-edit"></i>
+                        </div>
+                        <div class="step-text">Заполните профиль</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-icon">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                        <div class="step-text">Создайте объявление</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <div class="step-text">Найдите обмен</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="/" class="action-button action-secondary">
+                    <i class="fas fa-home"></i>
+                    На главную
+                </a>
+                <a href="/profile" class="action-button action-primary">
+                    <i class="fas fa-user"></i>
+                    В профиль
+                </a>
+            </div>
+        </div>
     </div>
-    <a href="/">На главную</a>
-    <a href="/auth">Войти в аккаунт</a>
+
+    <script>
+        // Add fade-in animation
+        const fadeElements = document.querySelectorAll('.fade-in');
+        
+        fadeElements.forEach((el, index) => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+            
+            setTimeout(() => {
+                el.style.opacity = '1';
+                el.style.transform = 'translateY(0)';
+            }, index * 200);
+        });
+
+        // Add confetti animation
+        function createConfetti() {
+            const confettiContainer = document.querySelector('.confetti');
+            for (let i = 0; i < 12; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti-item';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.background = `hsl(${Math.random() * 360}, 70%, 60%)`;
+                confettiContainer.appendChild(confetti);
+            }
+        }
+
+        createConfetti();
+
+        // Add interactive effects
+        document.querySelectorAll('.step-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Auto-redirect to profile after 10 seconds
+        setTimeout(() => {
+            const redirect = confirm('Хотите перейти в свой профиль?');
+            if (redirect) {
+                window.location.href = '/profile';
+            }
+        }, 10000);
+    </script>
 </body>
 </html>

@@ -85,6 +85,53 @@
             background: var(--gradient);
         }
 
+        /* Photo Section */
+        .photo-section {
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+
+        .offer-image {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 12px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        .offer-image img {
+            max-width: 100%;
+            max-height: 370px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 3rem;
+            border-radius: 8px;
+        }
+
+        .image-placeholder span {
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+
         /* User Header */
         .user-header {
             display: flex;
@@ -503,6 +550,15 @@
                 max-width: 300px;
                 justify-content: center;
             }
+
+            .offer-image {
+                max-height: 300px;
+                padding: 10px;
+            }
+
+            .offer-image img {
+                max-height: 280px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -531,6 +587,14 @@
             .exchange-text {
                 font-size: 1.1rem;
             }
+
+            .offer-image {
+                max-height: 250px;
+            }
+
+            .offer-image img {
+                max-height: 230px;
+            }
         }
     </style>
 </head>
@@ -544,14 +608,46 @@
 
         <!-- Main Offer Card -->
         <div class="offer-card fade-in">
+            <!-- Photo Section -->
+            <div class="photo-section">
+                <div class="offer-image">
+                    {% if offer.image_url %}
+                        {% if offer.image_url.startswith('/static/') %}
+                            <img src="http://127.0.0.1:8000{{ offer.image_url }}" 
+                                 alt="{{ offer.give }}"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                 onload="console.log('✅ Фото загружено:', this.src)">
+                            <div class="image-placeholder" style="display: none;">
+                                <i class="fas fa-camera"></i>
+                                <span>Ошибка загрузки фото</span>
+                            </div>
+                        {% else %}
+                            <img src="{{ offer.image_url }}" 
+                                 alt="{{ offer.give }}"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                 onload="console.log('✅ Фото загружено:', this.src)">
+                            <div class="image-placeholder" style="display: none;">
+                                <i class="fas fa-camera"></i>
+                                <span>Ошибка загрузки фото</span>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="image-placeholder">
+                            <i class="fas fa-camera"></i>
+                            <span>Фото не добавлено</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
             <!-- User Header -->
             <div class="user-header">
                 <div class="user-info">
                     <div class="user-avatar">
-                        {{ offer.username[:2]|upper }}
+                        {{ offer.username[:2]|upper if offer.username else 'ГС' }}
                     </div>
                     <div class="user-details">
-                        <div class="username">{{ offer.username }}</div>
+                        <div class="username">{{ offer.username or 'Гость' }}</div>
                         <div class="user-meta">
                             {% if offer.city %}
                             <div class="user-location">
@@ -569,7 +665,7 @@
                 <div class="offer-meta">
                     <div class="offer-date">
                         <i class="fas fa-calendar-alt"></i>
-                        {{ offer.created_at.strftime('%d.%m.%Y %H:%M') }}
+                        {{ offer.created_at.strftime('%d.%m.%Y %H:%M') if offer.created_at else 'Недавно' }}
                     </div>
                     <div class="offer-id">ID: {{ offer.id }}</div>
                 </div>

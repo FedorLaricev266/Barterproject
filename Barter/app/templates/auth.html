@@ -3,112 +3,624 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход и регистрация</title>
+    <title>Вход и регистрация | Swap Space</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #8b5cf6;
+            --secondary: #06d6a0;
+            --accent: #f59e0b;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --background: #ffffff;
+            --background-alt: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06d6a0 100%);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            max-width: 400px;
-            margin: 50px auto;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--background-alt);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
-            background-color: #f5f5f5;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%236366f1' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
         }
+
         .auth-container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 450px;
+            width: 100%;
         }
+
+        /* Header */
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo-icon {
+            font-size: 2.2rem;
+        }
+
+        .auth-subtitle {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        /* Auth Card */
+        .auth-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        /* Tabs */
         .tabs {
             display: flex;
-            margin-bottom: 20px;
+            background: var(--background-alt);
+            border-radius: 12px;
+            padding: 0.5rem;
+            margin-bottom: 2rem;
+            position: relative;
         }
+
+        .tab-slider {
+            position: absolute;
+            top: 0.5rem;
+            left: 0.5rem;
+            width: calc(50% - 0.5rem);
+            height: calc(100% - 1rem);
+            background: var(--gradient);
+            border-radius: 8px;
+            transition: var(--transition);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .tab-slider.register {
+            transform: translateX(100%);
+        }
+
         .tab {
             flex: 1;
-            padding: 10px;
+            padding: 1rem 1.5rem;
             text-align: center;
-            background: #e0e0e0;
+            background: transparent;
             border: none;
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 1rem;
             cursor: pointer;
+            transition: var(--transition);
+            border-radius: 8px;
+            z-index: 1;
+            position: relative;
         }
+
         .tab.active {
-            background: #007bff;
             color: white;
         }
+
+        /* Forms */
         .form-container {
             display: none;
+            animation: fadeIn 0.4s ease-out;
         }
+
         .form-container.active {
             display: block;
         }
-        input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box;
+
+        .form-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: var(--text);
         }
-        button {
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+        }
+
+        .form-label i {
+            color: var(--primary);
+            width: 16px;
+        }
+
+        .form-input {
             width: 100%;
-            padding: 12px;
-            background: #007bff;
+            padding: 1rem 1.2rem 1rem 3rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: white;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-input:hover {
+            border-color: #cbd5e1;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+
+        .form-input:focus + .input-icon {
+            color: var(--primary);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+
+        .password-toggle:hover {
+            color: var(--primary);
+        }
+
+        /* Submit Button */
+        .submit-button {
+            width: 100%;
+            padding: 1.2rem;
+            background: var(--gradient);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
             cursor: pointer;
-            margin-top: 10px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+            margin-top: 1rem;
         }
-        button:hover {
-            background: #0056b3;
+
+        .submit-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .submit-button:active {
+            transform: translateY(-1px);
+        }
+
+        /* Additional Links */
+        .auth-links {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .auth-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .auth-link:hover {
+            color: var(--primary-dark);
+        }
+
+        /* Benefits */
+        .benefits {
+            background: var(--background-alt);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .benefits-title {
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .benefits-list {
+            list-style: none;
+            display: grid;
+            gap: 0.8rem;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .benefit-item i {
+            color: var(--secondary);
+            margin-top: 0.1rem;
+            flex-shrink: 0;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .auth-container {
+                max-width: 100%;
+            }
+
+            .auth-card {
+                padding: 2rem;
+            }
+
+            .logo {
+                font-size: 1.8rem;
+            }
+
+            .form-input {
+                padding: 0.9rem 1rem 0.9rem 2.8rem;
+            }
+
+            .input-icon {
+                left: 1rem;
+            }
+
+            .password-toggle {
+                right: 1rem;
+            }
+
+            .tab {
+                padding: 0.8rem 1.2rem;
+                font-size: 0.95rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="auth-container">
-        <div class="tabs">
-            <button class="tab active" onclick="showTab('login')">Вход</button>
-            <button class="tab" onclick="showTab('register')">Регистрация</button>
+    <div class="auth-container fade-in">
+        <!-- Header -->
+        <div class="auth-header">
+            <div class="logo">
+                <i class="fas fa-exchange-alt logo-icon"></i>
+                Swap Space
+            </div>
+            <p class="auth-subtitle">Присоединяйтесь к сообществу обменов</p>
         </div>
 
-        <div id="login-form" class="form-container active">
-            <h3>Вход в аккаунт</h3>
-            <form action="/login" method="post">
-                <input type="text" name="username" placeholder="Имя пользователя" required>
-                <input type="password" name="password" placeholder="Пароль" required>
-                <button type="submit">Войти</button>
-            </form>
+        <!-- Auth Card -->
+        <div class="auth-card">
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab-slider" id="tabSlider"></div>
+                <button class="tab active" onclick="showTab('login')">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Вход
+                </button>
+                <button class="tab" onclick="showTab('register')">
+                    <i class="fas fa-user-plus"></i>
+                    Регистрация
+                </button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="login-form" class="form-container active">
+                <h3 class="form-title">Вход в аккаунт</h3>
+                <form action="/login" method="post">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-user"></i>
+                            Имя пользователя
+                        </label>
+                        <input type="text" name="username" class="form-input" placeholder="Введите ваш username" required>
+                        <i class="fas fa-user input-icon"></i>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-lock"></i>
+                            Пароль
+                        </label>
+                        <input type="password" name="password" id="login-password" class="form-input" placeholder="Введите ваш пароль" required>
+                        <i class="fas fa-lock input-icon"></i>
+                        <button type="button" class="password-toggle" onclick="togglePassword('login-password')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+
+                    <button type="submit" class="submit-button">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Войти в аккаунт
+                    </button>
+                </form>
+
+                <div class="auth-links">
+                    <a href="#" class="auth-link">
+                        <i class="fas fa-key"></i>
+                        Забыли пароль?
+                    </a>
+                </div>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-form" class="form-container">
+                <h3 class="form-title">Регистрация</h3>
+                <form action="/register" method="post">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-user"></i>
+                            Имя пользователя
+                        </label>
+                        <input type="text" name="username" class="form-input" placeholder="Придумайте username" required>
+                        <i class="fas fa-user input-icon"></i>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-envelope"></i>
+                            Email
+                        </label>
+                        <input type="email" name="email" class="form-input" placeholder="your@email.com" required>
+                        <i class="fas fa-envelope input-icon"></i>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-lock"></i>
+                            Пароль
+                        </label>
+                        <input type="password" name="password" id="register-password" class="form-input" placeholder="Придумайте пароль" required>
+                        <i class="fas fa-lock input-icon"></i>
+                        <button type="button" class="password-toggle" onclick="togglePassword('register-password')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-lock"></i>
+                            Подтвердите пароль
+                        </label>
+                        <input type="password" name="confirm_password" id="confirm-password" class="form-input" placeholder="Повторите пароль" required>
+                        <i class="fas fa-lock input-icon"></i>
+                        <button type="button" class="password-toggle" onclick="togglePassword('confirm-password')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+
+                    <button type="submit" class="submit-button">
+                        <i class="fas fa-user-plus"></i>
+                        Создать аккаунт
+                    </button>
+                </form>
+            </div>
         </div>
 
-        <div id="register-form" class="form-container">
-            <h3>Регистрация</h3>
-            <form action="/register" method="post">
-                <input type="text" name="username" placeholder="Имя пользователя" required>
-                <input type="email" name="email" placeholder="Email" required>
-                <input type="password" name="password" placeholder="Пароль" required>
-                <input type="password" name="confirm_password" placeholder="Подтвердите пароль" required>
-                <button type="submit">Зарегистрироваться</button>
-            </form>
+        <!-- Benefits -->
+        <div class="benefits fade-in">
+            <h4 class="benefits-title">
+                <i class="fas fa-star"></i>
+                Преимущества регистрации
+            </h4>
+            <ul class="benefits-list">
+                <li class="benefit-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Создавайте неограниченное количество объявлений</span>
+                </li>
+                <li class="benefit-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Получайте уведомления о новых предложениях</span>
+                </li>
+                <li class="benefit-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Собирайте рейтинг и отзывы</span>
+                </li>
+                <li class="benefit-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Сохраняйте избранные объявления</span>
+                </li>
+            </ul>
         </div>
     </div>
 
     <script>
+        // Tab switching
         function showTab(tabName) {
-            // Скрыть все формы
+            // Hide all forms
             document.querySelectorAll('.form-container').forEach(form => {
                 form.classList.remove('active');
             });
             
-            // Убрать активный класс со всех кнопок
+            // Remove active class from all tabs
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
             
-            // Показать выбранную форму
+            // Show selected form
             document.getElementById(tabName + '-form').classList.add('active');
             
-            // Сделать кнопку активной
+            // Make button active
             event.target.classList.add('active');
+            
+            // Move slider
+            const slider = document.getElementById('tabSlider');
+            if (tabName === 'login') {
+                slider.classList.remove('register');
+            } else {
+                slider.classList.add('register');
+            }
         }
+
+        // Password visibility toggle
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = event.target.querySelector('i') || event.target;
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        }
+
+        // Form validation
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
+                
+                // Check if passwords match for registration
+                if (this.action.includes('/register')) {
+                    const password = document.getElementById('register-password').value;
+                    const confirmPassword = document.getElementById('confirm-password').value;
+                    
+                    if (password !== confirmPassword) {
+                        alert('Пароли не совпадают!');
+                        isValid = false;
+                    }
+                    
+                    if (password.length < 6) {
+                        alert('Пароль должен содержать минимум 6 символов!');
+                        isValid = false;
+                    }
+                }
+                
+                if (!isValid) {
+                    e.preventDefault();
+                } else {
+                    // Add loading state
+                    const button = this.querySelector('.submit-button');
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Обработка...';
+                    button.disabled = true;
+                    
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                        button.disabled = false;
+                    }, 2000);
+                }
+            });
+        });
+
+        // Add input focus effects
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateY(-2px)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Auto-focus first input on tab switch
+        function focusFirstInput(formId) {
+            const form = document.getElementById(formId);
+            const firstInput = form.querySelector('input');
+            if (firstInput) {
+                setTimeout(() => firstInput.focus(), 300);
+            }
+        }
+
+        // Enhanced tab switching with focus
+        const originalShowTab = showTab;
+        showTab = function(tabName) {
+            originalShowTab(tabName);
+            focusFirstInput(tabName + '-form');
+        };
     </script>
 </body>
 </html>

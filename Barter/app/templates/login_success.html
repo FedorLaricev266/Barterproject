@@ -3,40 +3,473 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход выполнен</title>
+    <title>Вход выполнен | Swap Space</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #8b5cf6;
+            --secondary: #06d6a0;
+            --accent: #f59e0b;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --background: #ffffff;
+            --background-alt: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06d6a0 100%);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            max-width: 400px;
-            margin: 50px auto;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--background-alt);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
+        }
+
+        .success-container {
+            max-width: 500px;
+            width: 100%;
             text-align: center;
         }
-        .success-message {
-            background: #d4edda;
-            color: #155724;
-            padding: 20px;
-            border-radius: 5px;
-            border: 1px solid #c3e6cb;
+
+        /* Success Animation */
+        .success-animation {
+            margin-bottom: 2rem;
         }
-        a {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background: #007bff;
+
+        .success-icon {
+            width: 120px;
+            height: 120px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            position: relative;
+            animation: successPulse 2s ease-in-out infinite;
+            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.3);
+        }
+
+        .success-icon i {
+            font-size: 3rem;
             color: white;
+        }
+
+        .welcome-rays {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .welcome-ray {
+            position: absolute;
+            width: 4px;
+            height: 25px;
+            background: var(--gradient);
+            border-radius: 2px;
+            animation: rayPulse 2s ease-in-out infinite;
+        }
+
+        .welcome-ray:nth-child(1) { top: -12px; left: 50%; animation-delay: 0s; }
+        .welcome-ray:nth-child(2) { top: 25%; right: -12px; animation-delay: 0.2s; transform: rotate(90deg); }
+        .welcome-ray:nth-child(3) { bottom: 25%; left: -12px; animation-delay: 0.4s; transform: rotate(90deg); }
+        .welcome-ray:nth-child(4) { bottom: -12px; left: 50%; animation-delay: 0.6s; }
+
+        /* Success Content */
+        .success-content {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 3rem 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        .success-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .success-subtitle {
+            color: var(--text-light);
+            font-size: 1.2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        /* User Welcome */
+        .user-welcome {
+            background: var(--background-alt);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--accent);
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .welcome-message {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .user-greeting {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            margin-bottom: 2rem;
+        }
+
+        .actions-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+
+        .action-item {
+            background: white;
+            padding: 1.5rem 1rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
             text-decoration: none;
-            border-radius: 5px;
+            color: inherit;
+        }
+
+        .action-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-light);
+        }
+
+        .action-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            margin: 0 auto 0.8rem;
+        }
+
+        .action-text {
+            font-size: 0.9rem;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-button {
+            padding: 1.2rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .action-secondary {
+            background: white;
+            color: var(--text);
+            border: 2px solid #e2e8f0;
+        }
+
+        .action-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-primary:hover {
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Animations */
+        @keyframes successPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes rayPulse {
+            0%, 100% { opacity: 0; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .success-container {
+                max-width: 100%;
+            }
+
+            .success-content {
+                padding: 2rem;
+            }
+
+            .success-title {
+                font-size: 1.8rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .action-button {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .success-content {
+                padding: 1.5rem;
+            }
+
+            .success-title {
+                font-size: 1.6rem;
+            }
+
+            .success-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .success-icon {
+                width: 100px;
+                height: 100px;
+            }
+
+            .success-icon i {
+                font-size: 2.5rem;
+            }
+
+            .action-button {
+                padding: 1rem 2rem;
+                font-size: 1rem;
+            }
+
+            .user-avatar {
+                width: 60px;
+                height: 60px;
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="success-message">
-        <h2>Успешный вход!</h2>
-        <p>Добро пожаловать, {{ username }}!</p>
-        <p>{{ message }}</p>
+    <div class="success-container">
+        <!-- Success Animation -->
+        <div class="success-animation fade-in">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+                <div class="welcome-rays">
+                    <div class="welcome-ray"></div>
+                    <div class="welcome-ray"></div>
+                    <div class="welcome-ray"></div>
+                    <div class="welcome-ray"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Content -->
+        <div class="success-content fade-in">
+            <h1 class="success-title">Успешный вход!</h1>
+            <p class="success-subtitle">Рады снова видеть вас в Swap Space</p>
+
+            <!-- User Welcome -->
+            <div class="user-welcome">
+                <div class="user-avatar">
+                    {{ username[:2]|upper }}
+                </div>
+                <div class="welcome-message">Добро пожаловать, {{ username }}!</div>
+                <div class="user-greeting">
+                    <i class="fas fa-clock"></i>
+                    Последний вход: только что
+                </div>
+            </div>
+
+            <!-- Welcome Message -->
+            {% if message %}
+            <div style="background: linear-gradient(135deg, #f0fdf4 0%, #bbf7d0 100%); border: 1px solid #bbf7d0; border-radius: 10px; padding: 1.5rem; margin-bottom: 2rem; color: #166534;">
+                <i class="fas fa-info-circle" style="margin-right: 0.5rem;"></i>
+                {{ message }}
+            </div>
+            {% endif %}
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h4 class="actions-title">
+                    <i class="fas fa-bolt"></i>
+                    Быстрые действия
+                </h4>
+                <div class="actions-grid">
+                    <a href="/addoffer" class="action-item">
+                        <div class="action-icon">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <div class="action-text">Добавить объявление</div>
+                    </a>
+                    <a href="/offer" class="action-item">
+                        <div class="action-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <div class="action-text">Найти обмен</div>
+                    </a>
+                    <a href="/profile" class="action-item">
+                        <div class="action-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="action-text">Мой профиль</div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="/" class="action-button action-secondary">
+                    <i class="fas fa-home"></i>
+                    На главную
+                </a>
+                <a href="/profile" class="action-button action-primary">
+                    <i class="fas fa-user-cog"></i>
+                    В профиль
+                </a>
+            </div>
+        </div>
     </div>
-    <a href="/">На главную</a>
-    <a href="/profile">В профиль</a>
+
+    <script>
+        // Add fade-in animation
+        const fadeElements = document.querySelectorAll('.fade-in');
+        
+        fadeElements.forEach((el, index) => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+            
+            setTimeout(() => {
+                el.style.opacity = '1';
+                el.style.transform = 'translateY(0)';
+            }, index * 200);
+        });
+
+        // Add interactive effects
+        document.querySelectorAll('.action-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Auto-redirect to profile after 8 seconds
+        setTimeout(() => {
+            const redirect = confirm('Перейти в ваш профиль?');
+            if (redirect) {
+                window.location.href = '/profile';
+            }
+        }, 8000);
+    </script>
 </body>
 </html>

@@ -3,432 +3,978 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мини-игра: Лабиринт✡️</title>
+    <title>Swap Master - Мини-игра | Swap Space</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #8b5cf6;
+            --secondary: #06d6a0;
+            --accent: #f59e0b;
+            --error: #ef4444;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --background: #ffffff;
+            --background-alt: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06d6a0 100%);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--background-alt);
+            min-height: 100vh;
+            padding: 20px;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%236366f1' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+
+        .game-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .game-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem 0;
+        }
+
+        .game-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--text) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .game-subtitle {
+            color: var(--text-light);
+            font-size: 1.2rem;
+        }
+
+        /* Game Card */
+        .game-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        /* Game Screens */
+        .game-screen {
+            display: none;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .game-screen.active {
+            display: block;
+        }
+
+        /* Start Screen */
+        .start-screen {
+            text-align: center;
+        }
+
+        .game-icon {
+            width: 120px;
+            height: 120px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 3rem;
+            color: white;
+            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.3);
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        .game-description {
+            background: var(--background-alt);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: left;
+            border-left: 4px solid var(--accent);
+        }
+
+        .description-title {
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .rules-list {
+            list-style: none;
+            display: grid;
+            gap: 0.8rem;
+        }
+
+        .rule-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .rule-item i {
+            color: var(--secondary);
+            margin-top: 0.1rem;
+            flex-shrink: 0;
+        }
+
+        /* Game Screen */
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--background-alt);
+            border-radius: 12px;
+        }
+
+        .score-display, .timer-display, .level-display {
+            text-align: center;
+        }
+
+        .score-value, .timer-value, .level-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .score-label, .timer-label, .level-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .timer-value.warning {
+            color: var(--accent);
+            animation: pulse 1s infinite;
+        }
+
+        .timer-value.danger {
+            color: var(--error);
+            animation: pulse 0.5s infinite;
+        }
+
+        /* Countdown */
+        .countdown-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            color: white;
+            font-size: 6rem;
+            font-weight: 800;
+        }
+
+        .countdown-number {
+            animation: countdownPop 1s ease-out;
+        }
+
+        /* Game Board */
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .item-card {
+            aspect-ratio: 1;
+            background: white;
+            border: 3px solid #e2e8f0;
+            border-radius: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            color: white;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        
-        h1 {
-            text-align: center;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        
-        .game-container {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            max-width: 500px;
-            width: 100%;
-        }
-        
-        .instructions {
-            background-color: rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-            font-size: 16px;
-            line-height: 1.5;
-        }
-        
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-        
-        button {
-            background: #ff8c00;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 50px;
-            font-size: 16px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        button:hover {
-            background: #ff6a00;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-        }
-        
-        button:active {
-            transform: translateY(0);
-        }
-        
-        .stats {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            font-size: 18px;
-            font-weight: bold;
-        }
-        
-        .maze {
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            grid-gap: 2px;
-            margin: 0 auto;
-            background-color: #2c3e50;
-            padding: 5px;
-            border-radius: 5px;
-        }
-        
-        .cell {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 3px;
-            font-weight: bold;
-            transition: all 0.2s ease;
+            transition: var(--transition);
             position: relative;
             overflow: hidden;
         }
-        
-        .wall {
-            background-color: #34495e;
+
+        .item-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-light);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
-        
-        .path {
-            background-color: #ecf0f1;
-            color: #2c3e50;
+
+        .item-card.selected {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%);
         }
-        
-        .player {
-            background-color: #e74c3c;
-            color: white;
-            box-shadow: 0 0 10px rgba(231, 76, 60, 0.7);
-            z-index: 2;
+
+        .item-card.matched {
+            border-color: var(--secondary);
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            animation: matchPulse 0.6s ease-out;
         }
-        
-        .exit {
-            background-color: #2ecc71;
-            color: white;
-            box-shadow: 0 0 10px rgba(46, 204, 113, 0.7);
-            z-index: 2;
+
+        .item-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
         }
-        
-        .gas {
-            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
-            color: white;
-            animation: gasPulse 2s infinite;
-            z-index: 1;
-        }
-        
-        .gas-source {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            color: white;
-            box-shadow: 0 0 15px rgba(231, 76, 60, 0.8);
-            z-index: 1;
-        }
-        
-        @keyframes gasPulse {
-            0% { opacity: 0.7; }
-            50% { opacity: 1; }
-            100% { opacity: 0.7; }
-        }
-        
-        .message {
+
+        .item-name {
+            font-size: 0.8rem;
+            font-weight: 600;
             text-align: center;
-            margin-top: 20px;
-            font-size: 20px;
-            font-weight: bold;
-            min-height: 30px;
+            color: var(--text);
         }
-        
-        .gas-warning {
-            color: #f1c40f;
-            text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
-            animation: warningPulse 1s infinite;
+
+        .item-category {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--gradient);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.6rem;
+            font-weight: 700;
         }
-        
-        @keyframes warningPulse {
-            0% { opacity: 1; }
+
+        /* Game Controls */
+        .game-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Buttons */
+        .game-button {
+            padding: 1.2rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: none;
+            cursor: pointer;
+        }
+
+        .game-button.primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .game-button.secondary {
+            background: white;
+            color: var(--text);
+            border: 2px solid #e2e8f0;
+        }
+
+        .game-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .game-button.primary:hover {
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Results Screen */
+        .results-screen {
+            text-align: center;
+        }
+
+        .results-icon {
+            width: 100px;
+            height: 100px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 2.5rem;
+            color: white;
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        .results-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 2px solid #e2e8f0;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .achievements {
+            background: var(--background-alt);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-left: 4px solid var(--accent);
+        }
+
+        .achievement-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            transition: var(--transition);
+        }
+
+        .achievement-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .achievement-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .achievement-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .achievement-info {
+            flex: 1;
+            text-align: left;
+        }
+
+        .achievement-name {
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.3rem;
+        }
+
+        .achievement-desc {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
-            100% { opacity: 1; }
         }
-        
-        @media (max-width: 500px) {
-            .cell {
-                width: 30px;
-                height: 30px;
-                font-size: 12px;
+
+        @keyframes matchPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes confettiFall {
+            0% { 
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% { 
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes countdownPop {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Confetti */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--gradient);
+            border-radius: 2px;
+            animation: confettiFall 3s linear forwards;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .game-container {
+                max-width: 100%;
+            }
+
+            .game-card {
+                padding: 2rem;
+            }
+
+            .game-title {
+                font-size: 2rem;
+            }
+
+            .game-board {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.8rem;
+            }
+
+            .game-info {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .game-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .game-button {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+
+            .results-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .game-card {
+                padding: 1.5rem;
+            }
+
+            .game-title {
+                font-size: 1.8rem;
+            }
+
+            .game-board {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .item-icon {
+                font-size: 1.5rem;
+            }
+
+            .item-name {
+                font-size: 0.7rem;
+            }
+
+            .countdown-overlay {
+                font-size: 4rem;
             }
         }
     </style>
 </head>
 <body>
-    <h1>Мини-игра: Лабиринт с газом</h1>
-    
     <div class="game-container">
-        <div class="instructions">
-            <p>Используйте клавиши со стрелками для перемещения. Доберитесь от <span style="color:#e74c3c">красной</span> точки до <span style="color:#2ecc71">зелёной</span> точки.</p>
-            <p class="gas-warning">⚠️ Газ распространяется из источника! Не попадайте в газовые области!</p>
+        <!-- Game Header -->
+        <div class="game-header">
+            <h1 class="game-title">Swap Master</h1>
+            <p class="game-subtitle">Найди пары для успешного обмена!</p>
         </div>
-        
-        <div class="controls">
-            <button id="restartBtn">Начать заново</button>
-            <button id="hintBtn">Подсказка</button>
+
+        <!-- Game Card -->
+        <div class="game-card">
+            <!-- Start Screen -->
+            <div id="startScreen" class="game-screen active">
+                <div class="start-screen">
+                    <div class="game-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <h2 style="margin-bottom: 1rem;">Готовы к обмену?</h2>
+                    <p style="color: var(--text-light); margin-bottom: 2rem;">
+                        Находите пары товаров для идеального обмена. Чем быстрее - тем больше очков!
+                    </p>
+
+                    <div class="game-description">
+                        <h3 class="description-title">
+                            <i class="fas fa-graduation-cap"></i>
+                            Правила игры
+                        </h3>
+                        <ul class="rules-list">
+                            <li class="rule-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Найдите пары товаров, которые можно обменять</span>
+                            </li>
+                            <li class="rule-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Кликайте на карточки чтобы выбрать их</span>
+                            </li>
+                            <li class="rule-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Найдите все пары до окончания времени</span>
+                            </li>
+                            <li class="rule-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Чем быстрее находите пары - тем больше очков</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="game-controls">
+                        <button class="game-button primary" onclick="startGame()">
+                            <i class="fas fa-play"></i>
+                            Начать игру
+                        </button>
+                        <a href="/" class="game-button secondary">
+                            <i class="fas fa-home"></i>
+                            На главную
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Screen -->
+            <div id="gameScreen" class="game-screen">
+                <div class="game-info">
+                    <div class="score-display">
+                        <div class="score-value" id="score">0</div>
+                        <div class="score-label">Очки</div>
+                    </div>
+                    <div class="timer-display">
+                        <div class="timer-value" id="timer">60</div>
+                        <div class="timer-label">Секунды</div>
+                    </div>
+                    <div class="level-display">
+                        <div class="level-value" id="level">1</div>
+                        <div class="level-label">Уровень</div>
+                    </div>
+                </div>
+
+                <div class="game-board" id="gameBoard">
+                    <!-- Game items will be generated here -->
+                </div>
+
+                <div class="game-controls">
+                    <button class="game-button secondary" onclick="restartGame()">
+                        <i class="fas fa-redo"></i>
+                        Заново
+                    </button>
+                    <button class="game-button secondary" onclick="showScreen('startScreen')">
+                        <i class="fas fa-times"></i>
+                        Выйти
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Screen -->
+            <div id="resultsScreen" class="game-screen">
+                <div class="results-screen">
+                    <div class="results-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h2 style="margin-bottom: 1rem;">Игра завершена!</h2>
+                    <p style="color: var(--text-light); margin-bottom: 2rem;" id="finalMessage">
+                        Отличный результат! Вы настоящий мастер обменов!
+                    </p>
+
+                    <div class="results-stats">
+                        <div class="stat-card">
+                            <div class="stat-value" id="finalScore">0</div>
+                            <div class="stat-label">Финальные очки</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="pairsFound">0</div>
+                            <div class="stat-label">Найдено пар</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="timeLeft">0</div>
+                            <div class="stat-label">Осталось времени</div>
+                        </div>
+                    </div>
+
+                    <div class="achievements">
+                        <h3 style="margin-bottom: 1rem; text-align: center;">Достижения</h3>
+                        <div class="achievement-item">
+                            <div class="achievement-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div class="achievement-info">
+                                <div class="achievement-name">Скоростной обмен</div>
+                                <div class="achievement-desc">Найдите все пары менее чем за 30 секунд</div>
+                            </div>
+                        </div>
+                        <div class="achievement-item">
+                            <div class="achievement-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="achievement-info">
+                                <div class="achievement-name">Мастер обменов</div>
+                                <div class="achievement-desc">Наберите более 1000 очков</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="game-controls">
+                        <button class="game-button primary" onclick="restartGame()">
+                            <i class="fas fa-redo"></i>
+                            Играть снова
+                        </button>
+                        <a href="/" class="game-button secondary">
+                            <i class="fas fa-home"></i>
+                            На главную
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <div class="stats">
-            <div>Ходы: <span id="moveCount">0</span></div>
-            <div>Время: <span id="timer">0</span> сек</div>
-            <div>Газ: <span id="gasLevel">0%</span></div>
-        </div>
-        
-        <div class="maze" id="maze"></div>
-        
-        <div class="message" id="message"></div>
     </div>
 
+    <!-- Countdown Overlay -->
+    <div id="countdownOverlay" class="countdown-overlay" style="display: none;"></div>
+
+    <!-- Confetti Container -->
+    <div class="confetti-container" id="confettiContainer"></div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const mazeElement = document.getElementById('maze');
-            const moveCountElement = document.getElementById('moveCount');
-            const timerElement = document.getElementById('timer');
-            const gasLevelElement = document.getElementById('gasLevel');
-            const messageElement = document.getElementById('message');
-            const restartBtn = document.getElementById('restartBtn');
-            const hintBtn = document.getElementById('hintBtn');
+        // Game data
+        const gameItems = [
+            { id: 1, name: 'Книга', icon: '📚', category: 'books' },
+            { id: 2, name: 'Наушники', icon: '🎧', category: 'electronics' },
+            { id: 3, name: 'Футболка', icon: '👕', category: 'clothes' },
+            { id: 4, name: 'Растение', icon: '🌿', category: 'other' },
+            { id: 5, name: 'Фотоаппарат', icon: '📷', category: 'electronics' },
+            { id: 6, name: 'Кроссовки', icon: '👟', category: 'clothes' },
+            { id: 7, name: 'Скейтборд', icon: '🛹', category: 'sports' },
+            { id: 8, name: 'Краски', icon: '🎨', category: 'hobby' }
+        ];
+
+        // Game state
+        let gameState = {
+            score: 0,
+            timeLeft: 60,
+            level: 1,
+            selectedItems: [],
+            matchedPairs: 0,
+            totalPairs: 0,
+            timer: null,
+            isGameActive: false
+        };
+
+        // DOM elements
+        const startScreen = document.getElementById('startScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const resultsScreen = document.getElementById('resultsScreen');
+        const gameBoard = document.getElementById('gameBoard');
+        const scoreElement = document.getElementById('score');
+        const timerElement = document.getElementById('timer');
+        const levelElement = document.getElementById('level');
+        const finalScoreElement = document.getElementById('finalScore');
+        const pairsFoundElement = document.getElementById('pairsFound');
+        const timeLeftElement = document.getElementById('timeLeft');
+        const finalMessageElement = document.getElementById('finalMessage');
+        const confettiContainer = document.getElementById('confettiContainer');
+        const countdownOverlay = document.getElementById('countdownOverlay');
+
+        // Show specific screen
+        function showScreen(screenId) {
+            document.querySelectorAll('.game-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // Start new game
+        function startGame() {
+            resetGameState();
+            generateGameBoard();
+            showCountdown();
+        }
+
+        // Show countdown before game starts
+        function showCountdown() {
+            showScreen('gameScreen');
             
-            let maze = [];
-            let playerPosition = { row: 0, col: 0 };
-            let exitPosition = { row: 9, col: 9 };
-            let gasSourcePosition = { row: 9, col: 0 };
-            let moveCount = 0;
-            let timer = 0;
-            let timerInterval;
-            let gasInterval;
-            let gameActive = false;
-            let gasCells = [];
-            let gasSpreadLevel = 0;
+            let countdown = 3;
+            countdownOverlay.style.display = 'flex';
+            countdownOverlay.innerHTML = `<div class="countdown-number">${countdown}</div>`;
             
-            // Определяем структуру лабиринта (0 - путь, 1 - стена)
-            const mazeStructure = [
-                [0, 1, 0, 0, 0, 1, 0, 1, 0, 0],
-                [0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
-                [0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
-                [1, 1, 0, 1, 1, 1, 1, 1, 0, 1],
-                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-                [0, 1, 1, 1, 1, 1, 0, 1, 1, 0],
-                [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-                [1, 1, 1, 1, 0, 1, 1, 1, 1, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-                [1, 1, 1, 1, 1, 1, 1, 0, 0, 0]
-            ];
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                if (countdown > 0) {
+                    countdownOverlay.innerHTML = `<div class="countdown-number">${countdown}</div>`;
+                } else {
+                    countdownOverlay.innerHTML = `<div class="countdown-number">Старт!</div>`;
+                    setTimeout(() => {
+                        countdownOverlay.style.display = 'none';
+                        startTimer();
+                        gameState.isGameActive = true;
+                    }, 1000);
+                    clearInterval(countdownInterval);
+                }
+            }, 1000);
+        }
+
+        // Restart game
+        function restartGame() {
+            if (gameState.timer) {
+                clearInterval(gameState.timer);
+            }
+            startGame();
+        }
+
+        // Reset game state
+        function resetGameState() {
+            gameState = {
+                score: 0,
+                timeLeft: 60,
+                level: 1,
+                selectedItems: [],
+                matchedPairs: 0,
+                totalPairs: 8,
+                timer: null,
+                isGameActive: false
+            };
             
-            // Инициализация игры
-            function initGame() {
-                maze = JSON.parse(JSON.stringify(mazeStructure));
-                playerPosition = { row: 0, col: 0 };
-                exitPosition = { row: 9, col: 9 };
-                gasSourcePosition = { row: 9, col: 0 };
-                moveCount = 0;
-                timer = 0;
-                gasSpreadLevel = 0;
-                gameActive = true;
-                gasCells = [gasSourcePosition];
-                
-                moveCountElement.textContent = moveCount;
-                timerElement.textContent = timer;
-                gasLevelElement.textContent = '0%';
-                messageElement.textContent = '';
-                
-                clearInterval(timerInterval);
-                clearInterval(gasInterval);
-                
-                timerInterval = setInterval(() => {
-                    if (gameActive) {
-                        timer++;
-                        timerElement.textContent = timer;
-                    }
-                }, 1000);
-                
-                // Запускаем распространение газа каждые 3 секунды
-                gasInterval = setInterval(spreadGas, 3000);
-                
-                renderMaze();
+            updateUI();
+            
+            // Reset timer colors
+            timerElement.classList.remove('warning', 'danger');
+        }
+
+        // Generate game board
+        function generateGameBoard() {
+            gameBoard.innerHTML = '';
+            
+            // Duplicate items and shuffle
+            const gameItemsDuplicated = [...gameItems, ...gameItems];
+            const shuffledItems = shuffleArray(gameItemsDuplicated);
+            
+            shuffledItems.forEach((item, index) => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'item-card';
+                itemElement.innerHTML = `
+                    <div class="item-icon">${item.icon}</div>
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-category">${item.category}</div>
+                `;
+                itemElement.dataset.itemId = item.id;
+                itemElement.addEventListener('click', () => selectItem(itemElement, item));
+                gameBoard.appendChild(itemElement);
+            });
+        }
+
+        // Select item
+        function selectItem(element, item) {
+            if (!gameState.isGameActive || element.classList.contains('selected') || element.classList.contains('matched')) {
+                return;
             }
             
-            // Распространение газа
-            function spreadGas() {
-                if (!gameActive) return;
-                
-                gasSpreadLevel++;
-                const gasPercentage = Math.min(100, Math.floor((gasCells.length / 40) * 100));
-                gasLevelElement.textContent = `${gasPercentage}%`;
-                
-                // Находим новые клетки для заполнения газом
-                let newGasCells = [];
-                let directions = [
-                    { row: -1, col: 0 }, // вверх
-                    { row: 1, col: 0 },  // вниз
-                    { row: 0, col: -1 }, // влево
-                    { row: 0, col: 1 }   // вправо
-                ];
-                
-                // Для каждой существующей газовой клетки проверяем соседей
-                for (let gasCell of gasCells) {
-                    for (let dir of directions) {
-                        const newRow = gasCell.row + dir.row;
-                        const newCol = gasCell.col + dir.col;
-                        
-                        // Проверяем, можно ли распространить газ в эту клетку
-                        if (newRow >= 0 && newRow < 10 && newCol >= 0 && newCol < 10 && 
-                            maze[newRow][newCol] === 0 && 
-                            !gasCells.some(cell => cell.row === newRow && cell.col === newCol) &&
-                            !newGasCells.some(cell => cell.row === newRow && cell.col === newCol)) {
-                            
-                            newGasCells.push({ row: newRow, col: newCol });
-                        }
-                    }
-                }
-                
-                // Добавляем новые газовые клетки
-                gasCells = [...gasCells, ...newGasCells];
-                
-                renderMaze();
-                
-                // Проверяем, не попал ли игрок в газ
-                const playerInGas = gasCells.some(cell => 
-                    cell.row === playerPosition.row && cell.col === playerPosition.col);
-                
-                if (playerInGas) {
-                    gameActive = false;
-                    clearInterval(timerInterval);
-                    clearInterval(gasInterval);
-                    messageElement.textContent = "Вы попали в газ! Игра окончена.";
-                }
-                
-                // Проверяем, не заполнен ли весь лабиринт
-                if (gasPercentage >= 90) {
-                    gameActive = false;
-                    clearInterval(timerInterval);
-                    clearInterval(gasInterval);
-                    messageElement.textContent = "Лабиринт полностью заполнен газом! Игра окончена.";
-                }
+            // Prevent selecting more than 2 items
+            if (gameState.selectedItems.length >= 2) {
+                return;
             }
             
-            // Отрисовка лабиринта
-            function renderMaze() {
-                mazeElement.innerHTML = '';
-                
-                for (let row = 0; row < 10; row++) {
-                    for (let col = 0; col < 10; col++) {
-                        const cell = document.createElement('div');
-                        cell.className = 'cell';
-                        
-                        if (maze[row][col] === 1) {
-                            cell.classList.add('wall');
-                        } else {
-                            // Проверяем, является ли клетка газом
-                            const isGas = gasCells.some(gasCell => gasCell.row === row && gasCell.col === col);
-                            const isGasSource = row === gasSourcePosition.row && col === gasSourcePosition.col;
-                            
-                            if (isGasSource) {
-                                cell.classList.add('gas-source');
-                                cell.textContent = '💨';
-                            } else if (isGas) {
-                                cell.classList.add('gas');
-                                cell.textContent = '☁️';
-                            } else {
-                                cell.classList.add('path');
-                            }
-                            
-                            if (row === playerPosition.row && col === playerPosition.col) {
-                                cell.classList.add('player');
-                                cell.textContent = '✡️';
-                            } else if (row === exitPosition.row && col === exitPosition.col) {
-                                cell.classList.add('exit');
-                                cell.textContent = '🏁';
-                            }
-                        }
-                        
-                        mazeElement.appendChild(cell);
-                    }
-                }
-            }
+            element.classList.add('selected');
+            gameState.selectedItems.push({ element, item });
             
-            // Перемещение игрока
-            function movePlayer(direction) {
-                if (!gameActive) return;
-                
-                let newRow = playerPosition.row;
-                let newCol = playerPosition.col;
-                
-                switch(direction) {
-                    case 'up': newRow--; break;
-                    case 'down': newRow++; break;
-                    case 'left': newCol--; break;
-                    case 'right': newCol++; break;
-                }
-                
-                // Проверка на выход за границы, стены и газ
-                const isGas = gasCells.some(cell => cell.row === newRow && cell.col === newCol);
-                
-                if (newRow >= 0 && newRow < 10 && newCol >= 0 && newCol < 10 && 
-                    maze[newRow][newCol] === 0 && !isGas) {
-                    playerPosition.row = newRow;
-                    playerPosition.col = newCol;
-                    moveCount++;
-                    moveCountElement.textContent = moveCount;
-                    
-                    renderMaze();
-                    
-                    // Проверка на победу
-                    if (playerPosition.row === exitPosition.row && playerPosition.col === exitPosition.col) {
-                        gameActive = false;
-                        clearInterval(timerInterval);
-                        clearInterval(gasInterval);
-                        messageElement.textContent = `Поздравляем! Вы прошли лабиринт за ${moveCount} ходов и ${timer} секунд!`;
-                    }
-                }
+            if (gameState.selectedItems.length === 2) {
+                checkMatch();
             }
+        }
+
+        // Check if selected items match
+        function checkMatch() {
+            const [first, second] = gameState.selectedItems;
             
-            // Подсказка
-            function showHint() {
-                if (!gameActive) return;
+            if (first.item.id === second.item.id) {
+                // Match found
+                first.element.classList.add('matched');
+                second.element.classList.add('matched');
+                gameState.matchedPairs++;
+                gameState.score += 100 * gameState.level;
                 
-                messageElement.textContent = "Газ распространяется из левого нижнего угла! Двигайтесь быстро!";
+                // Bonus for quick matches
+                if (gameState.timeLeft > 45) {
+                    gameState.score += 50;
+                } else if (gameState.timeLeft > 30) {
+                    gameState.score += 25;
+                }
+                
+                updateUI();
+                
+                // Check win condition
+                if (gameState.matchedPairs === gameState.totalPairs) {
+                    endGame(true);
+                }
+            } else {
+                // No match
                 setTimeout(() => {
-                    if (gameActive) messageElement.textContent = '';
+                    first.element.classList.remove('selected');
+                    second.element.classList.remove('selected');
+                }, 1000);
+            }
+            
+            // Clear selection
+            setTimeout(() => {
+                gameState.selectedItems = [];
+            }, 1000);
+        }
+
+        // Start timer
+        function startTimer() {
+            gameState.timer = setInterval(() => {
+                gameState.timeLeft--;
+                updateUI();
+                
+                // Update timer color based on remaining time
+                if (gameState.timeLeft <= 10) {
+                    timerElement.classList.add('danger');
+                    timerElement.classList.remove('warning');
+                } else if (gameState.timeLeft <= 30) {
+                    timerElement.classList.add('warning');
+                }
+                
+                if (gameState.timeLeft <= 0) {
+                    endGame(false);
+                }
+            }, 1000);
+        }
+
+        // End game
+        function endGame(isWin) {
+            gameState.isGameActive = false;
+            clearInterval(gameState.timer);
+            
+            // Update results
+            finalScoreElement.textContent = gameState.score;
+            pairsFoundElement.textContent = `${gameState.matchedPairs}/${gameState.totalPairs}`;
+            timeLeftElement.textContent = gameState.timeLeft;
+            
+            if (isWin) {
+                finalMessageElement.textContent = 'Поздравляем! Вы нашли все пары! 🎉';
+                createConfetti();
+            } else {
+                finalMessageElement.textContent = 'Время вышло! Попробуйте ещё раз! 💪';
+            }
+            
+            showScreen('resultsScreen');
+        }
+
+        // Update UI
+        function updateUI() {
+            scoreElement.textContent = gameState.score;
+            timerElement.textContent = gameState.timeLeft;
+            levelElement.textContent = gameState.level;
+        }
+
+        // Utility functions
+        function shuffleArray(array) {
+            const newArray = [...array]; // Create a copy to avoid mutating the original
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function createConfetti() {
+            // Clear any existing confetti
+            confettiContainer.innerHTML = '';
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.background = `hsl(${Math.random() * 360}, 70%, 60%)`;
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confettiContainer.appendChild(confetti);
+                
+                setTimeout(() => {
+                    if (confetti.parentNode === confettiContainer) {
+                        confetti.remove();
+                    }
                 }, 3000);
             }
-            
-            // Обработчики событий
-            document.addEventListener('keydown', function(event) {
-                switch(event.key) {
-                    case 'ArrowUp': movePlayer('up'); break;
-                    case 'ArrowDown': movePlayer('down'); break;
-                    case 'ArrowLeft': movePlayer('left'); break;
-                    case 'ArrowRight': movePlayer('right'); break;
-                }
-            });
-            
-            restartBtn.addEventListener('click', initGame);
-            hintBtn.addEventListener('click', showHint);
-            
-            // Запускаем игру при загрузке
-            initGame();
-        });
+        }
+
+        // Initialize game
+        updateUI();
     </script>
 </body>
 </html>
