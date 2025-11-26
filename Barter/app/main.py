@@ -1,14 +1,14 @@
 from fastapi import FastAPI, Form, Request, UploadFile, File
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import HTTPException
-from fastapi.responses import JSONResponse
 import uvicorn
 import os
 from database import db
 from datetime import datetime
 import shutil
+
 
 app = FastAPI()
 
@@ -26,6 +26,7 @@ print(f"Templates directory: {TEMPLATES_DIR}")
 print(f"Static directory: {STATIC_DIR}")
 print(f"Upload directory: {UPLOAD_DIR}")
 
+
 @app.exception_handler(404)
 async def not_found_exception_handler(request: Request, exc: HTTPException):
     if request.url.path.startswith('/api/'):
@@ -35,10 +36,11 @@ async def not_found_exception_handler(request: Request, exc: HTTPException):
         )
     
     return templates.TemplateResponse(
-        "404.html", 
+        "404.html",
         {"request": request, "error": "Страница не найдена"},
         status_code=404
     )
+
 
 @app.exception_handler(500)
 async def internal_server_error_handler(request: Request, exc: HTTPException):
@@ -49,21 +51,24 @@ async def internal_server_error_handler(request: Request, exc: HTTPException):
         )
     
     return templates.TemplateResponse(
-        "error.html", 
+        "error.html",
         {
-            "request": request, 
+            "request": request,
             "error": "Внутренняя ошибка сервера. Пожалуйста, попробуйте позже."
         },
         status_code=500
     )
 
+
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     return templates.TemplateResponse("home.html", {"request": request})
 
+
 @app.get("/addoffer", response_class=HTMLResponse)
 async def addoffer_form(request: Request):
     return templates.TemplateResponse("addoffer.html", {"request": request})
+
 
 @app.post("/addoffer", response_class=HTMLResponse)
 async def addoffer_submit(
@@ -96,10 +101,13 @@ async def addoffer_submit(
             print(f"Полный путь: {file_path}")
         
         query = """
-        INSERT INTO offers (user_id, give, `get`, contact, category, city, district, image_url) 
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO offers (user_id, give, `get`, contact, category, city, district, image_url)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
-        result = db.execute_query(query, (user_id, give, get, contact, category, city, district, image_path))
+        result = db.execute_query(
+            query,
+            (user_id, give, get, contact, category, city, district, image_path)
+        )
         
         print(f"Сохранено в БД: image_url = {image_path}")
         
@@ -118,9 +126,10 @@ async def addoffer_submit(
     except Exception as e:
         print(f"Ошибка при добавлении: {e}")
         return templates.TemplateResponse("error.html", {
-            "request": request, 
+            "request": request,
             "error": f"Ошибка: {str(e)}"
         })
+
 
 @app.get("/offer", response_class=HTMLResponse)
 async def offer_list(request: Request):
@@ -130,10 +139,10 @@ async def offer_list(request: Request):
         search = request.query_params.get('search', '')
         
         query = """
-        SELECT o.*, u.username 
-        FROM offers o 
-        LEFT JOIN users u ON o.user_id = u.id 
-        WHERE o.is_active = TRUE
+            SELECT o.*, u.username
+            FROM offers o
+            LEFT JOIN users u ON o.user_id = u.id
+            WHERE o.is_active = TRUE
         """
         params = []
         
@@ -178,9 +187,10 @@ async def offer_list(request: Request):
         import traceback
         traceback.print_exc()
         return templates.TemplateResponse("error.html", {
-            "request": request, 
+            "request": request,
             "error": f"Ошибка загрузки объявлений: {str(e)}"
         })
+
 
 @app.get("/profile", response_class=HTMLResponse)
 async def get_profile(request: Request):
@@ -190,7 +200,7 @@ async def get_profile(request: Request):
         
         if not user_data:
             return templates.TemplateResponse("error.html", {
-                "request": request, 
+                "request": request,
                 "error": "В системе нет пользователей. Сначала создайте пользователя в базе данных."
             })
         
@@ -199,7 +209,11 @@ async def get_profile(request: Request):
         
         print(f"Используем пользователя: {user['username']} (ID: {user_id})")
         
-        offers_query = "SELECT id, give, `get`, image_url FROM offers WHERE user_id = %s AND is_active = TRUE"
+        offers_query = """
+            SELECT id, give, `get`, image_url
+            FROM offers
+            WHERE user_id = %s AND is_active = TRUE
+        """
         active_offers = db.execute_query(offers_query, (user_id,), fetch=True) or []
         
         offers_count_query = "SELECT COUNT(*) as count FROM offers WHERE user_id = %s"
@@ -222,18 +236,19 @@ async def get_profile(request: Request):
     
     except Exception as e:
         return templates.TemplateResponse("error.html", {
-            "request": request, 
+            "request": request,
             "error": f"Ошибка загрузки профиля: {str(e)}"
         })
+
 
 @app.get("/offer/{id}", response_class=HTMLResponse)
 async def offercard(request: Request, id: int):
     try:
         query = """
-        SELECT o.*, u.username, u.email, u.phone 
-        FROM offers o 
-        JOIN users u ON o.user_id = u.id 
-        WHERE o.id = %s
+            SELECT o.*, u.username, u.email, u.phone
+            FROM offers o
+            JOIN users u ON o.user_id = u.id
+            WHERE o.id = %s
         """
         offer_data = db.execute_query(query, (id,), fetch=True)
         
@@ -252,9 +267,10 @@ async def offercard(request: Request, id: int):
         raise
     except Exception as e:
         return templates.TemplateResponse("error.html", {
-            "request": request, 
+            "request": request,
             "error": f"Ошибка загрузки объявления: {str(e)}"
         })
+
 
 @app.post("/delete_offer/{offer_id}")
 async def delete_offer(offer_id: int, request: Request):
@@ -275,13 +291,16 @@ async def delete_offer(offer_id: int, request: Request):
         print(f"Ошибка при удалении: {e}")
         return {"success": False, "message": f"Ошибка сервера: {str(e)}"}
 
+
 @app.get("/minigame", response_class=HTMLResponse)
 async def minigame(request: Request):
     return templates.TemplateResponse("minigame.html", {"request": request})
 
+
 @app.get("/test-404", response_class=HTMLResponse)
 async def test_404(request: Request):
     raise HTTPException(status_code=404, detail="Тестовая 404 ошибка")
+
 
 if __name__ == "__main__":
     print("Запуск сервера...")
