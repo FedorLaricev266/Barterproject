@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактирование профиля | Swap Space</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #8b5cf6;
+            --secondary: #06d6a0;
+            --accent: #f59e0b;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --background-alt: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --radius: 18px;
+            --transition: .3s ease;
+            --gradient: linear-gradient(135deg, #6366f1, #8b5cf6, #06d6a0);
+        }
+
+        body {
+            background: var(--background-alt);
+            font-family: "Inter", sans-serif;
+            padding: 30px;
+        }
+
+        .edit-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .edit-card {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn .6s ease-out;
+        }
+
+        .edit-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: var(--gradient);
+        }
+
+        .edit-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-group {
+            margin-bottom: 1.4rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: .4rem;
+            color: var(--text);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: .9rem 1rem;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: #fff;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+            outline: none;
+        }
+
+        .actions {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: .9rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .btn-save {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, .35);
+        }
+
+        .btn-back {
+            background: white;
+            border: 2px solid #e5e7eb;
+            color: var(--text);
+        }
+
+        .btn-back:hover {
+            background: #f1f5f9;
+            transform: translateY(-3px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            .edit-card {
+                padding: 1.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="edit-container">
+    <div class="edit-card">
+        <h1 class="edit-title"><i class="fas fa-user-edit"></i> Редактировать профиль</h1>
+
+        <form method="post" action="/edit_profile">
+
+            <div class="form-group">
+                <label class="form-label">Полное имя</label>
+                <input type="text"
+                       name="full_name"
+                       class="form-input"
+                       placeholder="Введите ваше имя"
+                       value="{{ user.full_name or '' }}">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email"
+                       name="email"
+                       class="form-input"
+                       placeholder="Введите email"
+                       value="{{ user.email or '' }}">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Телефон</label>
+                <input type="text"
+                       name="phone"
+                       class="form-input"
+                       placeholder="Введите номер телефона"
+                       value="{{ user.phone or '' }}">
+            </div>
+
+            <div class="actions">
+                <a href="/profile" class="btn btn-back">
+                    <i class="fas fa-arrow-left"></i> Назад
+                </a>
+
+                <button type="submit" class="btn btn-save">
+                    <i class="fas fa-check"></i> Сохранить
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

@@ -75,6 +75,24 @@
             font-size: 1.1rem;
         }
 
+        /* Error Message */
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            color: #dc2626;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .error-message i {
+            font-size: 1.1rem;
+        }
+
         /* Auth Card */
         .auth-card {
             background: var(--card-bg);
@@ -261,6 +279,12 @@
             transform: translateY(-1px);
         }
 
+        .submit-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         /* Additional Links */
         .auth-links {
             text-align: center;
@@ -382,6 +406,14 @@
 
         <!-- Auth Card -->
         <div class="auth-card">
+            <!-- Error Message -->
+            {% if error %}
+            <div class="error-message">
+                <i class="fas fa-exclamation-triangle"></i>
+                {{ error }}
+            </div>
+            {% endif %}
+
             <!-- Tabs -->
             <div class="tabs">
                 <div class="tab-slider" id="tabSlider"></div>
@@ -398,13 +430,13 @@
             <!-- Login Form -->
             <div id="login-form" class="form-container active">
                 <h3 class="form-title">Вход в аккаунт</h3>
-                <form action="/login" method="post">
+                <form action="/login" method="post" id="loginForm">
                     <div class="form-group">
                         <label class="form-label">
                             <i class="fas fa-user"></i>
                             Имя пользователя
                         </label>
-                        <input type="text" name="username" class="form-input" placeholder="Введите ваш username" required>
+                        <input type="text" name="username" class="form-input" placeholder="Введите ваш username" required value="{{ request.query_params.get('username', '') }}">
                         <i class="fas fa-user input-icon"></i>
                     </div>
 
@@ -420,7 +452,7 @@
                         </button>
                     </div>
 
-                    <button type="submit" class="submit-button">
+                    <button type="submit" class="submit-button" id="loginSubmit">
                         <i class="fas fa-sign-in-alt"></i>
                         Войти в аккаунт
                     </button>
@@ -437,7 +469,7 @@
             <!-- Register Form -->
             <div id="register-form" class="form-container">
                 <h3 class="form-title">Регистрация</h3>
-                <form action="/register" method="post">
+                <form action="/register" method="post" id="registerForm">
                     <div class="form-group">
                         <label class="form-label">
                             <i class="fas fa-user"></i>
@@ -480,7 +512,7 @@
                         </button>
                     </div>
 
-                    <button type="submit" class="submit-button">
+                    <button type="submit" class="submit-button" id="registerSubmit">
                         <i class="fas fa-user-plus"></i>
                         Создать аккаунт
                     </button>
@@ -557,42 +589,46 @@
             }
         }
 
-        // Form validation
-        document.querySelectorAll('form').forEach(form => {
-            form.addEventListener('submit', function(e) {
-                let isValid = true;
-                
-                // Check if passwords match for registration
-                if (this.action.includes('/register')) {
-                    const password = document.getElementById('register-password').value;
-                    const confirmPassword = document.getElementById('confirm-password').value;
-                    
-                    if (password !== confirmPassword) {
-                        alert('Пароли не совпадают!');
-                        isValid = false;
-                    }
-                    
-                    if (password.length < 6) {
-                        alert('Пароль должен содержать минимум 6 символов!');
-                        isValid = false;
-                    }
-                }
-                
-                if (!isValid) {
-                    e.preventDefault();
-                } else {
-                    // Add loading state
-                    const button = this.querySelector('.submit-button');
-                    const originalText = button.innerHTML;
-                    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Обработка...';
-                    button.disabled = true;
-                    
-                    setTimeout(() => {
-                        button.innerHTML = originalText;
-                        button.disabled = false;
-                    }, 2000);
-                }
-            });
+        // Form validation and submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            const button = this.querySelector('.submit-button');
+            const originalText = button.innerHTML;
+            
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Вход...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }, 3000);
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const button = this.querySelector('.submit-button');
+            
+            // Client-side validation
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('Пароли не совпадают!');
+                return;
+            }
+            
+            if (password.length < 6) {
+                e.preventDefault();
+                alert('Пароль должен содержать минимум 6 символов!');
+                return;
+            }
+            
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Регистрация...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }, 3000);
         });
 
         // Add input focus effects
@@ -621,6 +657,13 @@
             originalShowTab(tabName);
             focusFirstInput(tabName + '-form');
         };
+
+        // Check if there's an error and switch to appropriate tab
+        {% if error %}
+        {% if 'регистрац' in error.lower() or 'существует' in error.lower() %}
+        setTimeout(() => showTab('register'), 100);
+        {% endif %}
+        {% endif %}
     </script>
 </body>
 </html>

@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль {{ profile_user.username }} | Swap Space</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #8b5cf6;
+            --secondary: #06d6a0;
+            --accent: #f59e0b;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --background: #ffffff;
+            --background-alt: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06d6a0 100%);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--background-alt);
+            padding: 20px;
+        }
+
+        .profile-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Navigation */
+        .profile-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1rem 0;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .back-link:hover {
+            background: var(--background);
+            box-shadow: var(--shadow);
+        }
+
+        /* Header Profile */
+        .profile-header {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        .profile-main {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--text) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .profile-username {
+            color: var(--text-light);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .profile-meta {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .profile-rating {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #8b5e3c;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 0.1rem;
+        }
+
+        .rating-stars .fas.fa-star {
+            color: #ffc107;
+        }
+
+        .rating-stars .far.fa-star {
+            color: #e2e8f0;
+        }
+
+        .profile-joined {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1.8rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* About Me */
+        .about-section {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            color: var(--text);
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .about-content {
+            color: var(--text);
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+
+        /* Active Offers */
+        .offers-section {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .offers-grid {
+            display: grid;
+            gap: 1.2rem;
+        }
+
+        .offer-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: var(--transition);
+            background: white;
+        }
+
+        .offer-card:hover {
+            border-color: var(--primary-light);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .offer-content {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .offer-give, .offer-get {
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .offer-give {
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+        }
+
+        .offer-get {
+            background: #f0fdf4;
+            border-left: 4px solid #22c55e;
+        }
+
+        .offer-label {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .offer-give .offer-label {
+            color: #dc2626;
+        }
+
+        .offer-get .offer-label {
+            color: #16a34a;
+        }
+
+        .offer-text {
+            color: var(--text);
+            font-size: 1.05rem;
+        }
+
+        .offer-arrow {
+            color: var(--primary);
+            font-size: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        .view-offer-btn {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .view-offer-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-light);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-text {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Rating Section */
+        .rating-section {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .rating-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .rating-stars-input {
+            display: flex;
+            gap: 0.5rem;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+
+        .rating-star {
+            font-size: 2.5rem;
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .rating-star:hover,
+        .rating-star:hover ~ .rating-star,
+        .rating-star.selected {
+            color: #ffc107;
+        }
+
+        .comment-input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .submit-btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            justify-content: center;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .rating-info {
+            background: #f0f9ff;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        /* Recent Reviews */
+        .reviews-section {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .review-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            background: white;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .reviewer-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .reviewer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .reviewer-name {
+            font-weight: 600;
+        }
+
+        .review-rating {
+            color: #ffc107;
+        }
+
+        .review-date {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .review-comment {
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .profile-main {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-meta {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .offer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .offer-arrow {
+                transform: rotate(90deg);
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-header {
+                padding: 1.5rem;
+            }
+
+            .profile-avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 1.8rem;
+            }
+
+            .profile-name {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <!-- Navigation -->
+        <nav class="profile-nav">
+            <a href="/" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                На главную
+            </a>
+            {% if current_user %}
+            <a href="/profile" class="back-link">
+                <i class="fas fa-user"></i>
+                Мой профиль
+            </a>
+            {% endif %}
+        </nav>
+
+        <!-- Header Profile -->
+        <div class="profile-header fade-in">
+            <div class="profile-main">
+                <div class="profile-avatar">
+                    {% if profile_user.avatar_url %}
+                        <img src="{{ profile_user.avatar_url }}" alt="{{ profile_user.username }}">
+                    {% else %}
+                        {{ profile_user.username[:2]|upper }}
+                    {% endif %}
+                </div>
+                <div class="profile-info">
+                    <h1 class="profile-name">{{ profile_user.full_name or profile_user.username }}</h1>
+                    <div class="profile-username">@{{ profile_user.username }}</div>
+                    <div class="profile-meta">
+                        <div class="profile-rating">
+                            <div class="rating-stars">
+                                {% for i in range(5) %}
+                                    {% if i < rating_stats.avg_rating|int %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <span>{{ rating_stats.avg_rating }}</span>
+                            {% if rating_stats.total_ratings > 0 %}
+                            <span class="rating-count">({{ rating_stats.total_ratings }})</span>
+                            {% endif %}
+                        </div>
+                        <div class="profile-joined">
+                            <i class="fas fa-calendar-alt"></i>
+                            На сайте с {{ profile_user.registration_date.strftime('%d.%m.%Y') if profile_user.registration_date else 'Неизвестно' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card fade-in">
+                <div class="stat-icon">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <div class="stat-value">{{ offers_count }}</div>
+                <div class="stat-label">Активных объявлений</div>
+            </div>
+            
+            <div class="stat-card fade-in">
+                <div class="stat-icon">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <div class="stat-value">{{ successful_exchanges }}</div>
+                <div class="stat-label">Успешных обменов</div>
+            </div>
+            
+            <div class="stat-card fade-in">
+                <div class="stat-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <div class="stat-value">{{ rating_stats.avg_rating }}</div>
+                <div class="stat-label">Рейтинг доверия</div>
+            </div>
+        </div>
+
+        <!-- About Me -->
+        {% if profile_user.about_me %}
+        <div class="about-section fade-in">
+            <h2 class="section-title">
+                <i class="fas fa-user-circle"></i>
+                Обо мне
+            </h2>
+            <div class="about-content">{{ profile_user.about_me }}</div>
+        </div>
+        {% endif %}
+
+        <!-- Active Offers -->
+        <div class="offers-section fade-in">
+            <h2 class="section-title">
+                <i class="fas fa-list-alt"></i>
+                Активные объявления
+            </h2>
+            
+            {% if offers %}
+            <div class="offers-grid">
+                {% for offer in offers %}
+                <div class="offer-card">
+                    <div class="offer-content">
+                        <div class="offer-give">
+                            <div class="offer-label">
+                                <i class="fas fa-arrow-up"></i>
+                                Отдаю
+                            </div>
+                            <div class="offer-text">{{ offer.give }}</div>
+                        </div>
+                        
+                        <div class="offer-arrow">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        
+                        <div class="offer-get">
+                            <div class="offer-label">
+                                <i class="fas fa-arrow-down"></i>
+                                Получаю
+                            </div>
+                            <div class="offer-text">{{ offer['get'] }}</div>
+                        </div>
+                    </div>
+                    <a href="/offer/{{ offer.id }}" class="view-offer-btn">
+                        <i class="fas fa-eye"></i>
+                        Посмотреть объявление
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">📝</div>
+                <div class="empty-text">У пользователя пока нет активных объявлений</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Rating Form (only if current user is logged in and not viewing own profile) -->
+        {% if current_user and current_user.id != profile_user.id %}
+        <div class="rating-section fade-in">
+            <h2 class="section-title">
+                <i class="fas fa-star"></i>
+                {% if has_rated %}Изменить оценку{% else %}Оценить пользователя{% endif %}
+            </h2>
+            
+            <form id="ratingForm" class="rating-form" onsubmit="submitRating(event)">
+                <input type="hidden" name="target_user_id" value="{{ profile_user.id }}">
+                
+                <div class="rating-stars-input">
+                    {% for i in range(5, 0, -1) %}
+                    <i class="fas fa-star rating-star" 
+                       data-value="{{ i }}" 
+                       onclick="selectRating({{ i }})"
+                       {% if user_rating and i <= user_rating %}class="selected"{% endif %}></i>
+                    {% endfor %}
+                </div>
+                <input type="hidden" id="ratingValue" name="rating" value="{{ user_rating or '' }}">
+                
+                <textarea name="comment" id="comment" class="comment-input" 
+                          placeholder="Ваш отзыв о пользователе (необязательно)">{{ comment or '' }}</textarea>
+                
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i>
+                    {% if has_rated %}Обновить оценку{% else %}Отправить оценку{% endif %}
+                </button>
+                
+                {% if has_rated %}
+                <div class="rating-info">
+                    <i class="fas fa-info-circle"></i>
+                    Вы уже оценили этого пользователя. Вы можете изменить свою оценку.
+                </div>
+                {% endif %}
+            </form>
+        </div>
+        {% endif %}
+
+        <!-- Recent Reviews -->
+        {% if recent_reviews %}
+        <div class="reviews-section fade-in">
+            <h2 class="section-title">
+                <i class="fas fa-comments"></i>
+                Последние отзывы
+            </h2>
+            
+            {% for review in recent_reviews %}
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="reviewer-info">
+                        <div class="reviewer-avatar">
+                            {% if review.rater_avatar %}
+                                <img src="{{ review.rater_avatar }}" alt="{{ review.rater_username }}" style="width: 100%; height: 100%; border-radius: 50%;">
+                            {% else %}
+                                {{ review.rater_username[:2]|upper }}
+                            {% endif %}
+                        </div>
+                        <div>
+                            <div class="reviewer-name">{{ review.rater_username }}</div>
+                            <div class="review-rating">
+                                {% for i in range(review.rating) %}★{% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="review-date">
+                        {{ review.created_at.strftime('%d.%m.%Y %H:%M') if review.created_at else '' }}
+                    </div>
+                </div>
+                
+                {% if review.comment %}
+                <div class="review-comment">
+                    {{ review.comment }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // Rating stars selection
+        let selectedRating = {{ user_rating or 0 }};
+        
+        function selectRating(rating) {
+            selectedRating = rating;
+            document.getElementById('ratingValue').value = rating;
+            
+            // Update star display
+            const stars = document.querySelectorAll('.rating-star');
+            stars.forEach(star => {
+                const value = parseInt(star.getAttribute('data-value'));
+                if (value <= rating) {
+                    star.classList.add('selected');
+                } else {
+                    star.classList.remove('selected');
+                }
+            });
+        }
+        
+        // Submit rating form
+        async function submitRating(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            const targetUserId = formData.get('target_user_id');
+            const rating = formData.get('rating');
+            const comment = formData.get('comment');
+            
+            if (!rating) {
+                alert('Пожалуйста, выберите оценку');
+                return;
+            }
+            
+            const submitBtn = form.querySelector('.submit-btn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
+            submitBtn.disabled = true;
+            
+            try {
+                const response = await fetch(`/rate_user/${targetUserId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `rating=${rating}&comment=${encodeURIComponent(comment)}`
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(data.message || 'Оценка отправлена!');
+                    location.reload(); // Reload to show updated rating
+                } else {
+                    alert(data.message || 'Ошибка при отправке оценки');
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            } catch (error) {
+                alert('Ошибка сети: ' + error.message);
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+        
+        // Add fade-in animation on scroll
+        const fadeElements = document.querySelectorAll('.fade-in');
+        const fadeInOnScroll = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        fadeElements.forEach(el => {
+            el.style.opacity = 0;
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            fadeInOnScroll.observe(el);
+        });
+    </script>
+</body>
+</html>

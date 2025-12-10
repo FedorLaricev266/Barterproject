@@ -48,6 +48,7 @@
             text-align: center;
             margin-bottom: 3rem;
             padding: 2rem 0;
+            position: relative; /* для кнопки */
         }
 
         .page-title {
@@ -62,6 +63,30 @@
         .page-subtitle {
             color: var(--text-light);
             font-size: 1.2rem;
+        }
+
+        /* Кнопка логотипа */
+        .logo-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 0.7rem 1rem;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            z-index: 10;
+        }
+
+        .logo-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
         }
 
         /* Form Card */
@@ -456,6 +481,9 @@
     <div class="form-container">
         <!-- Page Header -->
         <div class="page-header fade-in">
+            <a href="/" class="logo-button" title="На главную">
+                <i class="fas fa-home"></i>
+            </a>
             <h1 class="page-title">Добавить объявление</h1>
             <p class="page-subtitle">Создайте предложение для взаимовыгодного обмена</p>
         </div>
@@ -470,36 +498,28 @@
                 </label>
                 <div class="category-tags">
                     <div class="category-tag" data-category="books">
-                        <i class="fas fa-book"></i>
-                        Книги
+                        <i class="fas fa-book"></i> Книги
                     </div>
                     <div class="category-tag" data-category="electronics">
-                        <i class="fas fa-laptop"></i>
-                        Электроника
+                        <i class="fas fa-laptop"></i> Электроника
                     </div>
                     <div class="category-tag" data-category="clothes">
-                        <i class="fas fa-tshirt"></i>
-                        Одежда
+                        <i class="fas fa-tshirt"></i> Одежда
                     </div>
                     <div class="category-tag" data-category="furniture">
-                        <i class="fas fa-couch"></i>
-                        Мебель
+                        <i class="fas fa-couch"></i> Мебель
                     </div>
                     <div class="category-tag" data-category="sports">
-                        <i class="fas fa-dumbbell"></i>
-                        Спорт
+                        <i class="fas fa-dumbbell"></i> Спорт
                     </div>
                     <div class="category-tag" data-category="hobby">
-                        <i class="fas fa-paint-brush"></i>
-                        Хобби
+                        <i class="fas fa-paint-brush"></i> Хобби
                     </div>
                     <div class="category-tag" data-category="services">
-                        <i class="fas fa-tools"></i>
-                        Услуги
+                        <i class="fas fa-tools"></i> Услуги
                     </div>
                     <div class="category-tag" data-category="other">
-                        <i class="fas fa-ellipsis-h"></i>
-                        Другое
+                        <i class="fas fa-ellipsis-h"></i> Другое
                     </div>
                 </div>
                 <input type="hidden" id="category" name="category" required>
@@ -513,8 +533,7 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label class="form-label">
-                        <i class="fas fa-map-marker-alt"></i>
-                        Город
+                        <i class="fas fa-map-marker-alt"></i> Город
                     </label>
                     <select id="city" name="city" class="form-select" required>
                         <option value="">Выберите город</option>
@@ -529,48 +548,26 @@
                         <option value="other">Другой город</option>
                     </select>
                     <div class="form-hint">
-                        <i class="fas fa-lightbulb"></i>
-                        Укажите город для локального поиска
+                        <i class="fas fa-lightbulb"></i> Укажите город для локального поиска
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">
-                        <i class="fas fa-map-pin"></i>
-                        Район (опционально)
+                        <i class="fas fa-map-pin"></i> Район (опционально)
                     </label>
-                    <input 
-                        type="text" 
-                        id="district" 
-                        name="district" 
-                        class="form-input" 
-                        placeholder="Например: Центральный район"
-                    >
+                    <input type="text" id="district" name="district" class="form-input" placeholder="Например: Центральный район">
                     <div class="form-hint">
-                        <i class="fas fa-lightbulb"></i>
-                        Уточните район для удобства встречи
+                        <i class="fas fa-lightbulb"></i> Уточните район для удобства встречи
                     </div>
                 </div>
             </div>
 
             <!-- Photo Upload -->
             <div class="form-group">
-                <label class="form-label">
-                    <i class="fas fa-camera"></i>
-                    Фото товара
-                </label>
-                <input 
-                    type="file" 
-                    id="image" 
-                    name="image" 
-                    class="form-file" 
-                    accept="image/*"
-                >
-                <div class="form-hint">
-                    <i class="fas fa-lightbulb"></i>
-                    Загрузите фото товара (JPG, PNG, WebP). Необязательное поле.
-                </div>
-                <!-- Image Preview -->
+                <label class="form-label"><i class="fas fa-camera"></i> Фото товара</label>
+                <input type="file" id="image" name="image" class="form-file" accept="image/*">
+                <div class="form-hint"><i class="fas fa-lightbulb"></i> Загрузите фото товара (JPG, PNG, WebP). Необязательное поле.</div>
                 <div class="image-preview" id="imagePreview">
                     <img src="#" alt="Превью" class="preview-image" id="previewImage">
                 </div>
@@ -579,136 +576,62 @@
             <!-- Exchange Visualization -->
             <div class="exchange-visual">
                 <div class="exchange-item">
-                    <div class="exchange-icon">
-                        <i class="fas fa-arrow-up"></i>
-                    </div>
+                    <div class="exchange-icon"><i class="fas fa-arrow-up"></i></div>
                     <div class="exchange-label">Отдаю</div>
                 </div>
-                
-                <div class="exchange-arrow">
-                    <i class="fas fa-exchange-alt"></i>
-                </div>
-                
+                <div class="exchange-arrow"><i class="fas fa-exchange-alt"></i></div>
                 <div class="exchange-item">
-                    <div class="exchange-icon">
-                        <i class="fas fa-arrow-down"></i>
-                    </div>
+                    <div class="exchange-icon"><i class="fas fa-arrow-down"></i></div>
                     <div class="exchange-label">Получаю</div>
                 </div>
             </div>
 
-            <!-- Give Input -->
+            <!-- Inputs Give/Get/Contact -->
             <div class="form-group">
-                <label class="form-label">
-                    <i class="fas fa-arrow-up"></i>
-                    Что вы хотите поменять
-                </label>
-                <input 
-                    type="text" 
-                    id="give" 
-                    name="give" 
-                    class="form-input" 
-                    placeholder="Например: Книги Стивена Кинга, настольная игра Монополия"
-                    required
-                >
-                <div class="form-hint">
-                    <i class="fas fa-lightbulb"></i>
-                    Опишите предмет или услугу, которую готовы предложить
-                </div>
+                <label class="form-label"><i class="fas fa-arrow-up"></i> Что вы хотите поменять</label>
+                <input type="text" id="give" name="give" class="form-input" placeholder="Например: Книги Стивена Кинга, настольная игра Монополия" required>
+                <div class="form-hint"><i class="fas fa-lightbulb"></i> Опишите предмет или услугу, которую готовы предложить</div>
             </div>
 
-            <!-- Get Input -->
             <div class="form-group">
-                <label class="form-label">
-                    <i class="fas fa-arrow-down"></i>
-                    Что вы хотите получить
-                </label>
-                <input 
-                    type="text" 
-                    id="get" 
-                    name="get" 
-                    class="form-input" 
-                    placeholder="Например: Комнатные растения, услуги фотографа"
-                    required
-                >
-                <div class="form-hint">
-                    <i class="fas fa-lightbulb"></i>
-                    Опишите, что хотели бы получить взамен
-                </div>
+                <label class="form-label"><i class="fas fa-arrow-down"></i> Что вы хотите получить</label>
+                <input type="text" id="get" name="get" class="form-input" placeholder="Например: Комнатные растения, услуги фотографа" required>
+                <div class="form-hint"><i class="fas fa-lightbulb"></i> Опишите, что хотели бы получить взамен</div>
             </div>
 
-            <!-- Contact Input -->
             <div class="form-group">
-                <label class="form-label">
-                    <i class="fas fa-comments"></i>
-                    Контакты для связи
-                </label>
-                <input 
-                    type="text" 
-                    id="contact" 
-                    name="contact" 
-                    class="form-input" 
-                    placeholder="Телефон, email или мессенджер"
-                    required
-                >
-                <div class="form-hint">
-                    <i class="fas fa-shield-alt"></i>
-                    Эта информация будет видна только зарегистрированным пользователям
-                </div>
+                <label class="form-label"><i class="fas fa-comments"></i> Контакты для связи</label>
+                <input type="text" id="contact" name="contact" class="form-input" placeholder="Телефон, email или мессенджер" required>
+                <div class="form-hint"><i class="fas fa-shield-alt"></i> Эта информация будет видна только зарегистрированным пользователям</div>
             </div>
 
             <!-- Submit Button -->
             <div class="submit-section">
-                <button type="submit" class="submit-button" id="submitButton">
-                    <i class="fas fa-plus"></i>
-                    Добавить объявление
-                </button>
+                <button type="submit" class="submit-button" id="submitButton"><i class="fas fa-plus"></i> Добавить объявление</button>
             </div>
         </form>
 
         <!-- Tips Section -->
         <div class="tips-section fade-in">
-            <h3 class="tips-title">
-                <i class="fas fa-graduation-cap"></i>
-                Советы для успешного обмена
-            </h3>
+            <h3 class="tips-title"><i class="fas fa-graduation-cap"></i> Советы для успешного обмена</h3>
             <ul class="tips-list">
-                <li class="tip-item">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Будьте конкретны в описании товаров или услуг</span>
-                </li>
-                <li class="tip-item">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Указывайте реальные контакты для быстрой связи</span>
-                </li>
-                <li class="tip-item">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Рассматривайте разные варианты обмена</span>
-                </li>
-                <li class="tip-item">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Отвечайте на предложения оперативно</span>
-                </li>
-                <li class="tip-item">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Добавляйте качественные фото для лучшего отклика</span>
-                </li>
+                <li class="tip-item"><i class="fas fa-check-circle"></i> Будьте конкретны в описании товаров или услуг</li>
+                <li class="tip-item"><i class="fas fa-check-circle"></i> Указывайте реальные контакты для быстрой связи</li>
+                <li class="tip-item"><i class="fas fa-check-circle"></i> Рассматривайте разные варианты обмена</li>
+                <li class="tip-item"><i class="fas fa-check-circle"></i> Отвечайте на предложения оперативно</li>
+                <li class="tip-item"><i class="fas fa-check-circle"></i> Добавляйте качественные фото для лучшего отклика</li>
             </ul>
         </div>
 
         <!-- Back Link -->
         <div class="back-link fade-in">
-            <a href="/" class="back-button">
-                <i class="fas fa-arrow-left"></i>
-                На главную
-            </a>
+            <a href="/" class="back-button"><i class="fas fa-arrow-left"></i> На главную</a>
         </div>
     </div>
 
     <script>
-        // Add fade-in animation
+        // JS код для работы формы, категорий, превью и валидации
         const fadeElements = document.querySelectorAll('.fade-in');
-        
         const fadeInOnScroll = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -717,7 +640,6 @@
                 }
             });
         }, { threshold: 0.1 });
-        
         fadeElements.forEach(el => {
             el.style.opacity = 0;
             el.style.transform = 'translateY(20px)';
@@ -725,88 +647,56 @@
             fadeInOnScroll.observe(el);
         });
 
-        // Category selection
         const categoryTags = document.querySelectorAll('.category-tag');
         const categoryInput = document.getElementById('category');
         const submitButton = document.getElementById('submitButton');
 
         categoryTags.forEach(tag => {
             tag.addEventListener('click', function() {
-                // Remove active class from all tags
                 categoryTags.forEach(t => t.classList.remove('active'));
-                
-                // Add active class to clicked tag
                 this.classList.add('active');
-                
-                // Set hidden input value
                 categoryInput.value = this.getAttribute('data-category');
-                
                 updateSubmitButton();
             });
         });
 
-        // Image preview functionality
         const imageInput = document.getElementById('image');
         const imagePreview = document.getElementById('imagePreview');
         const previewImage = document.getElementById('previewImage');
-
         imageInput.addEventListener('change', function() {
             const file = this.files[0];
-            
             if (file) {
                 const reader = new FileReader();
-                
                 reader.onload = function(e) {
                     previewImage.src = e.target.result;
                     imagePreview.style.display = 'block';
                 }
-                
                 reader.readAsDataURL(file);
             } else {
                 imagePreview.style.display = 'none';
             }
-            
             updateSubmitButton();
         });
 
-        // City selection enhancement
         const citySelect = document.getElementById('city');
-        
         citySelect.addEventListener('change', function() {
-            if (this.value) {
-                this.style.borderColor = '#06d6a0';
-            }
+            if (this.value) this.style.borderColor = '#06d6a0';
             updateSubmitButton();
         });
 
-        // Form validation and enhancement
         const form = document.querySelector('form');
         const inputs = document.querySelectorAll('.form-input, .form-select, .form-file');
-
         inputs.forEach(input => {
-            // Add focus effects
-            input.addEventListener('focus', function() {
-                this.parentElement.style.transform = 'translateY(-2px)';
-            });
-
-            input.addEventListener('blur', function() {
-                this.parentElement.style.transform = 'translateY(0)';
-            });
-
-            // Real-time validation
+            input.addEventListener('focus', function() { this.parentElement.style.transform = 'translateY(-2px)'; });
+            input.addEventListener('blur', function() { this.parentElement.style.transform = 'translateY(0)'; });
             if (input.type !== 'file') {
                 input.addEventListener('input', function() {
-                    if (this.value.trim().length > 0 && this.checkValidity()) {
-                        this.style.borderColor = '#06d6a0';
-                    } else {
-                        this.style.borderColor = '#e2e8f0';
-                    }
+                    this.style.borderColor = (this.value.trim().length > 0 && this.checkValidity()) ? '#06d6a0' : '#e2e8f0';
                     updateSubmitButton();
                 });
             }
         });
 
-        // Update submit button state
         function updateSubmitButton() {
             const requiredFields = [
                 categoryInput.value,
@@ -815,23 +705,13 @@
                 document.getElementById('get').value,
                 document.getElementById('contact').value
             ];
-
             const allFilled = requiredFields.every(field => field.trim().length > 0);
-            
-            if (allFilled) {
-                submitButton.disabled = false;
-                submitButton.style.opacity = '1';
-            } else {
-                submitButton.disabled = true;
-                submitButton.style.opacity = '0.6';
-            }
+            submitButton.disabled = !allFilled;
+            submitButton.style.opacity = allFilled ? '1' : '0.6';
         }
 
-        // Form submission enhancement
         form.addEventListener('submit', function(e) {
             let isValid = true;
-            
-            // Check required fields
             const requiredFields = [
                 { element: categoryInput, name: 'категория' },
                 { element: citySelect, name: 'город' },
@@ -839,45 +719,27 @@
                 { element: document.getElementById('get'), name: 'что получаете' },
                 { element: document.getElementById('contact'), name: 'контакты' }
             ];
-
             requiredFields.forEach(field => {
                 if (!field.element.value.trim()) {
                     field.element.style.borderColor = '#ef4444';
                     isValid = false;
-                    
-                    // Add shake animation to invalid fields
-                    if (field.element.style.animation) {
-                        field.element.style.animation = '';
-                    }
-                    setTimeout(() => {
-                        field.element.style.animation = 'shake 0.5s ease-in-out';
-                    }, 10);
+                    if (field.element.style.animation) field.element.style.animation = '';
+                    setTimeout(() => { field.element.style.animation = 'shake 0.5s ease-in-out'; }, 10);
                 }
             });
-
             if (!isValid) {
                 e.preventDefault();
-                // Show error message
                 alert('Пожалуйста, заполните все обязательные поля');
             } else {
-                // Show success animation before submit
                 submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Добавляем...';
                 submitButton.disabled = true;
             }
         });
 
-        // Add shake animation
         const style = document.createElement('style');
-        style.textContent = `
-            @keyframes shake {
-                0%, 100% { transform: translateX(0); }
-                25% { transform: translateX(-5px); }
-                75% { transform: translateX(5px); }
-            }
-        `;
+        style.textContent = `@keyframes shake {0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); }}`;
         document.head.appendChild(style);
 
-        // Initialize submit button state
         updateSubmitButton();
     </script>
 </body>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Мои предложения обмена</title>
+</head>
+<body>
+    <h1>Предложения обмена для вас</h1>
+    
+    {% if suggestions_count > 0 %}
+        <p>Найдено предложений: {{ suggestions_count }}</p>
+        
+        {% for suggestion in suggestions %}
+        <div style="border: 1px solid #ddd; padding: 20px; margin: 20px 0;">
+            <h3>Предложение #{{ loop.index }}</h3>
+            <p>Вы отдаёте: <strong>{{ suggestion.your_item }}</strong></p>
+            <p>Вы получаете: <strong>{{ suggestion.wanted_item }}</strong></p>
+            <p>Длина цепочки: {{ suggestion.chain_length }} шагов</p>
+            
+            <h4>Цепочка обмена:</h4>
+            {% for step in suggestion.chain %}
+            <div style="margin: 5px 0; padding: 5px; background: #f5f5f5;">
+                {{ step.username }}: {{ step.give }} → {{ step.get }}
+            </div>
+            {% endfor %}
+            
+            <a href="/offer/{{ suggestion.your_offer_id }}/chains">
+                <button>Просмотреть детали цепочки</button>
+            </a>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>У вас пока нет предложений обмена. Добавьте больше объявлений!</p>
+    {% endif %}
+    
+    <a href="/profile">← Назад в профиль</a>
+</body>
+</html>

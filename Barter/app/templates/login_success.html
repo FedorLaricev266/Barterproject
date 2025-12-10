@@ -261,6 +261,11 @@
             border: 2px solid #e2e8f0;
         }
 
+        .action-logout {
+            background: #ef4444;
+            color: white;
+        }
+
         .action-button:hover {
             transform: translateY(-3px);
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
@@ -268,6 +273,10 @@
 
         .action-primary:hover {
             box-shadow: 0 12px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .action-logout:hover {
+            box-shadow: 0 12px 30px rgba(239, 68, 68, 0.3);
         }
 
         /* Animations */
@@ -378,7 +387,7 @@
             <!-- User Welcome -->
             <div class="user-welcome">
                 <div class="user-avatar">
-                    {{ username[:2]|upper }}
+                    {{ username[:2]|upper if username else 'US' }}
                 </div>
                 <div class="welcome-message">Добро пожаловать, {{ username }}!</div>
                 <div class="user-greeting">
@@ -433,6 +442,12 @@
                     <i class="fas fa-user-cog"></i>
                     В профиль
                 </a>
+                <form action="/logout" method="post" style="display: inline;">
+                    <button type="submit" class="action-button action-logout" style="border: none; cursor: pointer;">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Выйти
+                    </button>
+                </form>
             </div>
         </div>
     </div>

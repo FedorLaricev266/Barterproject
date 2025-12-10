@@ -21,6 +21,7 @@
             --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06d6a0 100%);
             --border-radius: 16px;
             --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            --error: #ef4444;
         }
 
         * {
@@ -81,6 +82,38 @@
             font-size: 2.5rem;
             box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
             flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-edit {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            transition: var(--transition);
+        }
+
+        .avatar-edit:hover {
+            transform: scale(1.1);
+            background: var(--primary);
+            color: white;
         }
 
         .profile-info {
@@ -106,11 +139,12 @@
             display: flex;
             gap: 1.5rem;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .profile-rating {
-            background: var(--gradient);
-            color: white;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #8b5e3c;
             padding: 0.4rem 1rem;
             border-radius: 50px;
             font-weight: 700;
@@ -118,7 +152,20 @@
             display: flex;
             align-items: center;
             gap: 0.4rem;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 0.1rem;
+        }
+
+        .rating-stars .fas.fa-star {
+            color: #ffc107;
+        }
+
+        .rating-stars .far.fa-star {
+            color: #e2e8f0;
         }
 
         .profile-joined {
@@ -127,6 +174,50 @@
             display: flex;
             align-items: center;
             gap: 0.4rem;
+        }
+
+        .profile-url {
+            background: var(--primary);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .profile-url:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Edit Profile Button */
+        .edit-profile-btn {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            z-index: 10;
+        }
+
+        .edit-profile-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4);
         }
 
         /* Stats Grid */
@@ -188,6 +279,54 @@
         .stat-label {
             color: var(--text-light);
             font-size: 0.95rem;
+        }
+
+        /* Rating Distribution */
+        .rating-distribution {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .distribution-bars {
+            margin-top: 1.5rem;
+        }
+
+        .distribution-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .distribution-star {
+            color: #ffc107;
+            font-size: 0.9rem;
+            width: 20px;
+        }
+
+        .distribution-bar-bg {
+            flex: 1;
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .distribution-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            border-radius: 4px;
+            transition: width 1s ease-out;
+        }
+
+        .distribution-percent {
+            width: 40px;
+            text-align: right;
+            color: var(--text-light);
+            font-size: 0.9rem;
         }
 
         /* Contact Info */
@@ -262,6 +401,21 @@
             font-size: 0.95rem;
         }
 
+        /* About Me */
+        .about-section {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .about-content {
+            color: var(--text);
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+
         /* Active Offers */
         .offers-section {
             background: var(--card-bg);
@@ -273,7 +427,7 @@
 
         .offers-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
         }
@@ -289,6 +443,7 @@
             padding: 1.5rem;
             transition: var(--transition);
             background: white;
+            position: relative;
         }
 
         .offer-card:hover {
@@ -344,6 +499,39 @@
             color: var(--primary);
             font-size: 1.5rem;
             animation: pulse 2s infinite;
+        }
+
+        .offer-actions {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .offer-action-btn {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-light);
+        }
+
+        .offer-action-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .offer-action-btn.delete:hover {
+            background: var(--error);
+            border-color: var(--error);
         }
 
         .empty-state {
@@ -458,6 +646,20 @@
                 max-width: 300px;
                 justify-content: center;
             }
+
+            .edit-profile-btn {
+                position: static;
+                margin: 1rem auto;
+                display: flex;
+                justify-content: center;
+                width: fit-content;
+            }
+
+            .offer-actions {
+                position: static;
+                justify-content: center;
+                margin-top: 1rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -489,22 +691,50 @@
     <div class="profile-container">
         <!-- Header Profile -->
         <div class="profile-header fade-in">
+            <!-- Edit Profile Button -->
+            <button class="edit-profile-btn" onclick="window.location.href='/edit_profile'">
+                <i class="fas fa-edit"></i>
+                Редактировать профиль
+            </button>
+
             <div class="profile-main">
                 <div class="profile-avatar">
-                    <i class="fas fa-user"></i>
+                    {% if avatar_url %}
+                        <img src="{{ avatar_url }}" alt="{{ username }}">
+                    {% else %}
+                        {{ username[:2]|upper }}
+                    {% endif %}
+                    <div class="avatar-edit" onclick="window.location.href='/edit_profile'">
+                        <i class="fas fa-camera"></i>
+                    </div>
                 </div>
                 <div class="profile-info">
-                    <h1 class="profile-name">{{ full_name }}</h1>
+                    <h1 class="profile-name">{{ full_name or username }}</h1>
                     <div class="profile-username">@{{ username }}</div>
                     <div class="profile-meta">
                         <div class="profile-rating">
-                            <i class="fas fa-star"></i>
-                            {{ rating }}
+                            <div class="rating-stars">
+                                {% for i in range(5) %}
+                                    {% if i < rating_stats.avg_rating|int %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <span>{{ rating_stats.avg_rating }}</span>
+                            {% if rating_stats.total_ratings > 0 %}
+                            <span class="rating-count">({{ rating_stats.total_ratings }})</span>
+                            {% endif %}
                         </div>
                         <div class="profile-joined">
                             <i class="fas fa-calendar-alt"></i>
                             На сайте с {{ registration_date }}
                         </div>
+                        <a href="/user/{{ user_id }}" class="profile-url" title="Ссылка на ваш профиль">
+                            <i class="fas fa-link"></i>
+                            Мой публичный профиль
+                        </a>
                     </div>
                 </div>
             </div>
@@ -532,10 +762,46 @@
                 <div class="stat-icon">
                     <i class="fas fa-heart"></i>
                 </div>
-                <div class="stat-value">{{ rating }}</div>
+                <div class="stat-value">{{ rating_stats.avg_rating }}</div>
                 <div class="stat-label">Рейтинг доверия</div>
             </div>
         </div>
+
+        <!-- Rating Distribution -->
+        {% if rating_stats.total_ratings > 0 %}
+        <div class="rating-distribution fade-in">
+            <h2 class="section-title">
+                <i class="fas fa-chart-bar"></i>
+                Распределение оценок
+            </h2>
+            <div class="distribution-bars">
+                {% for stars in range(5, 0, -1) %}
+                <div class="distribution-row">
+                    <div class="distribution-star">
+                        {{ stars }}★
+                    </div>
+                    <div class="distribution-bar-bg">
+                        <div class="distribution-bar-fill" style="width: {{ rating_stats.distribution[stars] }}%"></div>
+                    </div>
+                    <div class="distribution-percent">
+                        {{ rating_stats.distribution[stars]|int }}%
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- About Me -->
+        {% if about_me %}
+        <div class="about-section fade-in">
+            <h2 class="section-title">
+                <i class="fas fa-user-circle"></i>
+                Обо мне
+            </h2>
+            <div class="about-content">{{ about_me }}</div>
+        </div>
+        {% endif %}
 
         <!-- Contact Information -->
         <div class="contact-section fade-in">
@@ -560,7 +826,7 @@
                     </div>
                     <div class="contact-details">
                         <div class="contact-label">Телефон</div>
-                        <div class="contact-value">{{ phone }}</div>
+                        <div class="contact-value">{{ phone or "Не указан" }}</div>
                     </div>
                 </div>
             </div>
@@ -573,12 +839,24 @@
                     <i class="fas fa-list-alt"></i>
                     Активные объявления
                 </h2>
+                <a href="/addoffer" class="action-button action-primary">
+                    <i class="fas fa-plus"></i>
+                    Добавить объявление
+                </a>
             </div>
             
-            {% if active_offers %}
+            {% if offers %}
             <div class="offers-grid">
-                {% for offer in active_offers %}
-                <div class="offer-card">
+                {% for offer in offers %}
+                <div class="offer-card" id="offer-card-{{ offer.id }}">
+                    <div class="offer-actions">
+                        <button class="offer-action-btn" onclick="editOffer({{ offer.id }})" title="Редактировать">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="offer-action-btn delete" onclick="deleteOffer(this, {{ offer.id }})" title="Удалить">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
                     <div class="offer-content">
                         <div class="offer-give">
                             <div class="offer-label">
@@ -607,6 +885,10 @@
             <div class="empty-state">
                 <div class="empty-icon">📝</div>
                 <div class="empty-text">У вас пока нет активных объявлений</div>
+                <a href="/addoffer" class="action-button action-primary">
+                    <i class="fas fa-plus"></i>
+                    Создать первое объявление
+                </a>
             </div>
             {% endif %}
         </div>
@@ -614,37 +896,95 @@
         <!-- Actions -->
         <div class="actions-section fade-in">
             <div class="actions-grid">
-                <a href="/offer" class="action-button action-secondary">
-                    <i class="fas fa-th-list"></i>
-                    Все объявления
-                </a>
                 <a href="/addoffer" class="action-button action-primary">
-                    <i class="fas fa-plus"></i>
-                    Добавить объявление
+                    <i class="fas fa-plus-circle"></i>
+                    Создать объявление
+                </a>
+                <a href="/offer" class="action-button action-secondary">
+                    <i class="fas fa-search"></i>
+                    Поиск объявлений
+                </a>
+                <a href="/minigame" class="action-button action-secondary">
+                    <i class="fas fa-gamepad"></i>
+                    Мини-игра
                 </a>
             </div>
         </div>
     </div>
 
     <script>
-        // Add fade-in animation on scroll
-        const fadeElements = document.querySelectorAll('.fade-in');
-        
-        const fadeInOnScroll = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = 1;
-                    entry.target.style.transform = 'translateY(0)';
+        async function deleteOffer(button, offerId) {
+            if (!confirm('Вы уверены, что хотите удалить это объявление?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/delete_offer/${offerId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Удаляем карточку объявления из DOM
+                    const offerCard = document.getElementById(`offer-card-${offerId}`);
+                    if (offerCard) {
+                        offerCard.remove();
+                        alert('Объявление успешно удалено');
+                        
+                        // Обновляем счетчик объявлений
+                        const statValueElement = document.querySelector('.stat-card:first-child .stat-value');
+                        if (statValueElement) {
+                            const currentCount = parseInt(statValueElement.textContent);
+                            statValueElement.textContent = currentCount - 1;
+                        }
+                        
+                        // Если объявлений не осталось, показываем пустой state
+                        const offersGrid = document.querySelector('.offers-grid');
+                        if (offersGrid && offersGrid.children.length === 0) {
+                            const emptyState = `
+                                <div class="empty-state">
+                                    <div class="empty-icon">📝</div>
+                                    <div class="empty-text">У вас пока нет активных объявлений</div>
+                                    <a href="/addoffer" class="action-button action-primary">
+                                        <i class="fas fa-plus"></i>
+                                        Создать первое объявление
+                                    </a>
+                                </div>
+                            `;
+                            offersGrid.parentElement.innerHTML = `
+                                <div class="offers-header">
+                                    <h2 class="section-title">
+                                        <i class="fas fa-list-alt"></i>
+                                        Активные объявления
+                                    </h2>
+                                    <a href="/addoffer" class="action-button action-primary">
+                                        <i class="fas fa-plus"></i>
+                                        Добавить объявление
+                                    </a>
+                                </div>
+                                ${emptyState}
+                            `;
+                        }
+                    }
+                } else {
+                    alert(`Ошибка: ${result.message}`);
                 }
-            });
-        }, { threshold: 0.1 });
-        
-        fadeElements.forEach(el => {
-            el.style.opacity = 0;
-            el.style.transform = 'translateY(20px)';
-            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            fadeInOnScroll.observe(el);
-        });
+            } catch (error) {
+                console.error('Ошибка при удалении объявления:', error);
+                alert('Произошла ошибка при удалении объявления');
+            }
+        }
+
+        function editOffer(offerId) {
+            // Редирект на страницу редактирования
+            // Если у вас есть страница редактирования
+            // window.location.href = `/edit_offer/${offerId}`;
+            alert('Функция редактирования пока не реализована');
+        }
     </script>
 </body>
 </html>

@@ -160,6 +160,13 @@
             font-weight: 700;
             font-size: 1.4rem;
             box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .user-details {
@@ -172,6 +179,12 @@
             font-size: 1.4rem;
             font-weight: 700;
             color: var(--text);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .username:hover {
+            color: var(--primary);
         }
 
         .user-meta {
@@ -188,6 +201,7 @@
             font-size: 0.95rem;
         }
 
+        /* Рейтинг пользователя - сохранен оригинальный стиль */
         .user-rating {
             display: flex;
             align-items: center;
@@ -195,6 +209,25 @@
             color: var(--accent);
             font-weight: 600;
             font-size: 0.9rem;
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 0.1rem;
+        }
+
+        .rating-stars .fas.fa-star {
+            color: #ffc107;
+        }
+
+        .rating-stars .far.fa-star {
+            color: #e2e8f0;
+        }
+
+        .rating-count {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-left: 0.2rem;
         }
 
         .offer-meta {
@@ -213,6 +246,20 @@
             font-size: 0.8rem;
             color: var(--text-light);
             margin-top: 0.5rem;
+        }
+
+        .view-profile-link {
+            display: inline-block;
+            margin-top: 0.8rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .view-profile-link:hover {
+            text-decoration: underline;
         }
 
         /* Category Badge */
@@ -644,10 +691,14 @@
             <div class="user-header">
                 <div class="user-info">
                     <div class="user-avatar">
-                        {{ offer.username[:2]|upper if offer.username else 'ГС' }}
+                        {% if offer.avatar_url %}
+                            <img src="{{ offer.avatar_url }}" alt="{{ offer.username }}">
+                        {% else %}
+                            {{ offer.username[:2]|upper if offer.username else 'ГС' }}
+                        {% endif %}
                     </div>
                     <div class="user-details">
-                        <div class="username">{{ offer.username or 'Гость' }}</div>
+                        <a href="/user/{{ offer.user_id }}" class="username">{{ offer.username or 'Гость' }}</a>
                         <div class="user-meta">
                             {% if offer.city %}
                             <div class="user-location">
@@ -657,7 +708,16 @@
                             {% endif %}
                             <div class="user-rating">
                                 <i class="fas fa-star"></i>
-                                <span>4.8</span>
+                                <span>
+                                    {% if user_rating and user_rating > 0 %}
+                                        {{ user_rating|float|round(1) }}
+                                        {% if total_ratings > 0 %}
+                                            ({{ total_ratings }})
+                                        {% endif %}
+                                    {% else %}
+                                        ещё нет оценок
+                                    {% endif %}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -668,6 +728,10 @@
                         {{ offer.created_at.strftime('%d.%m.%Y %H:%M') if offer.created_at else 'Недавно' }}
                     </div>
                     <div class="offer-id">ID: {{ offer.id }}</div>
+                    <a href="/user/{{ offer.user_id }}" class="view-profile-link">
+                        <i class="fas fa-user-circle"></i>
+                        Профиль автора
+                    </a>
                 </div>
             </div>
 
