@@ -1,0 +1,373 @@
+<!-- templates/conversation.html -->
+{% extends "base.html" %}
+
+{% block title %}Диалог с {{ other_user.username }} | Swap Space{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Боковая панель с диалогами -->
+        <div class="col-md-4 col-lg-3 d-none d-md-block">
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-comments me-2"></i>
+                        Диалоги
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    {% if dialogs %}
+                    <div class="list-group list-group-flush">
+                        {% for dialog in dialogs %}
+                        <a href="/messages/{{ dialog.other_user_id }}" 
+                           class="list-group-item list-group-item-action {% if dialog.other_user_id == other_user.id %}active{% endif %}">
+                            <div class="d-flex align-items-center">
+                                <img src="{{ dialog.other_avatar or '/static/images/default-avatar.png' }}" 
+                                     class="rounded-circle me-2" 
+                                     width="40" 
+                                     height="40">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-0">{{ dialog.other_username }}</h6>
+                                    <small class="text-muted">
+                                        {% if dialog.last_message_text %}
+                                            {{ dialog.last_message_text|truncate(30) }}
+                                        {% else %}
+                                            Нет сообщений
+                                        {% endif %}
+                                    </small>
+                                </div>
+                                {% if dialog.unread_count and dialog.unread_count > 0 %}
+                                <span class="badge bg-danger rounded-pill">{{ dialog.unread_count }}</span>
+                                {% endif %}
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Нет диалогов</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <a href="/messages" class="btn btn-outline-primary w-100">
+                <i class="fas fa-arrow-left me-2"></i>
+                Все диалоги
+            </a>
+        </div>
+
+        <!-- Основная область чата -->
+        <div class="col-md-8 col-lg-9">
+            <div class="card h-100">
+                <!-- Заголовок чата -->
+                <div class="card-header bg-light d-flex align-items-center">
+                    <div class="d-flex align-items-center">
+                        <img src="{{ other_user.avatar_url or '/static/images/default-avatar.png' }}" 
+                             class="rounded-circle me-3" 
+                             width="50" 
+                             height="50">
+                        <div>
+                            <h5 class="mb-0">{{ other_user.username }}</h5>
+                            <small class="text-muted" id="userStatus">
+                                {% if other_user.is_online %}В сети{% else %}Был(а) недавно{% endif %}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="ms-auto">
+                        <a href="/user/{{ other_user.id }}" class="btn btn-sm btn-outline-secondary me-2">
+                            <i class="fas fa-user"></i>
+                        </a>
+                        <button class="btn btn-sm btn-outline-danger" onclick="clearChat()">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Сообщения -->
+                <div class="card-body chat-messages" style="height: 400px; overflow-y: auto;" id="messagesContainer">
+                    {% if messages %}
+                        {% set last_date = None %}
+                        {% for message in messages %}
+                            {% set current_date = message.created_at.date() if message.created_at else None %}
+                            {% if current_date and current_date != last_date %}
+                            <div class="text-center my-3">
+                                <span class="badge bg-secondary">
+                                    {% if current_date == today %}
+                                        Сегодня
+                                    {% elif current_date == yesterday %}
+                                        Вчера
+                                    {% else %}
+                                        {{ message.created_at.strftime('%d.%m.%Y') if message.created_at else '' }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                            {% set last_date = current_date %}
+                            {% endif %}
+
+                            <div class="message-wrapper mb-3 {% if message.sender_id == current_user.id %}text-end{% endif %}">
+                                <div class="d-flex {% if message.sender_id == current_user.id %}justify-content-end{% endif %}">
+                                    {% if message.sender_id != current_user.id %}
+                                    <div class="flex-shrink-0 me-2">
+                                        <img src="{{ message.sender_avatar or '/static/images/default-avatar.png' }}" 
+                                             class="rounded-circle" 
+                                             width="32" 
+                                             height="32">
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <div class="flex-grow-1" style="max-width: 70%;">
+                                        <div class="message-bubble p-3 rounded {% if message.sender_id == current_user.id %}bg-primary text-white{% else %}bg-light{% endif %}">
+                                            {% if message.offer_title %}
+                                            <div class="alert alert-info py-1 px-2 mb-2 small">
+                                                <i class="fas fa-tag me-1"></i>
+                                                Объявление: {{ message.offer_title }}
+                                            </div>
+                                            {% endif %}
+                                            
+                                            <div class="message-text">{{ message.message }}</div>
+                                            
+                                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                                <small class="{% if message.sender_id == current_user.id %}text-white-50{% else %}text-muted{% endif %}">
+                                                    {{ message.created_at.strftime('%H:%M') if message.created_at else '' }}
+                                                </small>
+                                                
+                                                {% if message.sender_id == current_user.id %}
+                                                <button class="btn btn-sm p-0 text-white-50" 
+                                                        onclick="deleteMessage({{ message.id }})"
+                                                        title="Удалить">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {% if message.sender_id == current_user.id %}
+                                    <div class="flex-shrink-0 ms-2">
+                                        <img src="{{ current_user.avatar_url or '/static/images/default-avatar.png' }}" 
+                                             class="rounded-circle" 
+                                             width="32" 
+                                             height="32">
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-comment-slash fa-3x text-muted mb-3"></i>
+                        <h5>Нет сообщений</h5>
+                        <p class="text-muted">Начните общение первым</p>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Индикатор печати -->
+                    <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                        <div class="d-flex align-items-center">
+                            <div class="typing-dots me-2">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <span class="text-muted">{{ other_user.username }} печатает...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Форма отправки сообщения -->
+                <div class="card-footer">
+                    <form id="messageForm" class="d-flex gap-2">
+                        <input type="hidden" name="other_user_id" value="{{ other_user.id }}">
+                        
+                        <div class="flex-grow-1">
+                            <textarea class="form-control" 
+                                      id="messageInput" 
+                                      rows="1" 
+                                      placeholder="Введите сообщение..." 
+                                      required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" id="sendButton">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.chat-messages {
+    scroll-behavior: smooth;
+}
+
+.message-bubble {
+    position: relative;
+    word-break: break-word;
+}
+
+.message-bubble.bg-primary {
+    border-bottom-right-radius: 5px !important;
+}
+
+.message-bubble.bg-light {
+    border-bottom-left-radius: 5px !important;
+}
+
+.typing-dots {
+    display: flex;
+    gap: 4px;
+}
+
+.typing-dots span {
+    width: 8px;
+    height: 8px;
+    background-color: #6c757d;
+    border-radius: 50%;
+    animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+.typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typing {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-5px); }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Автоматическая прокрутка вниз
+    const messagesContainer = document.getElementById('messagesContainer');
+    if (messagesContainer) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    
+    // Автоматическое увеличение высоты textarea
+    const messageInput = document.getElementById('messageInput');
+    if (messageInput) {
+        messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+    }
+    
+    // Отправка сообщения
+    const messageForm = document.getElementById('messageForm');
+    if (messageForm) {
+        messageForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const messageInput = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+            const message = messageInput.value.trim();
+            const otherUserId = document.querySelector('input[name="other_user_id"]').value;
+            
+            if (!message) return;
+            
+            sendButton.disabled = true;
+            sendButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            try {
+                const response = await fetch(`/messages/${otherUserId}/send`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `message=${encodeURIComponent(message)}`
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    messageInput.value = '';
+                    messageInput.style.height = 'auto';
+                    location.reload();
+                } else {
+                    alert(data.message || 'Ошибка отправки сообщения');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Ошибка сети');
+            } finally {
+                sendButton.disabled = false;
+                sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
+            }
+        });
+    }
+    
+    // Проверка новых сообщений
+    let lastMessageId = 0;
+    const messages = document.querySelectorAll('.message-wrapper');
+    if (messages.length > 0) {
+        lastMessageId = parseInt(messages[messages.length - 1].dataset.messageId) || 0;
+    }
+    
+    // Функция для проверки новых сообщений
+    async function checkNewMessages() {
+        const otherUserId = document.querySelector('input[name="other_user_id"]').value;
+        
+        try {
+            const response = await fetch(`/messages/${otherUserId}/new?last_message_id=${lastMessageId}`);
+            const data = await response.json();
+            
+            if (data.success && data.messages.length > 0) {
+                // Обновляем страницу, чтобы показать новые сообщения
+                location.reload();
+            }
+        } catch (error) {
+            console.error('Ошибка проверки новых сообщений:', error);
+        }
+    }
+    
+    // Проверяем новые сообщения каждые 5 секунд
+    if (lastMessageId > 0) {
+        setInterval(checkNewMessages, 5000);
+    }
+});
+
+// Функции для работы с чатом
+function clearChat() {
+    const otherUserId = document.querySelector('input[name="other_user_id"]').value;
+    
+    if (confirm('Вы уверены, что хотите очистить переписку?')) {
+        fetch(`/messages/clear/${otherUserId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Ошибка при очистке переписки');
+            }
+        });
+    }
+}
+
+function deleteMessage(messageId) {
+    if (confirm('Удалить это сообщение?')) {
+        fetch(`/messages/delete/${messageId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Не удалось удалить сообщение');
+            }
+        });
+    }
+}
+</script>
+{% endblock %}

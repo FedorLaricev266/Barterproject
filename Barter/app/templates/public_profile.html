@@ -178,6 +178,46 @@
             gap: 0.4rem;
         }
 
+        /* Message Button Styles */
+        .message-button {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .message-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+            color: white;
+        }
+
+        .message-button-small {
+            padding: 0.5rem 1.2rem;
+            font-size: 0.9rem;
+        }
+
+        .message-button-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .message-button-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
         /* Stats Grid */
         .stats-grid {
             display: grid;
@@ -514,6 +554,14 @@
             line-height: 1.6;
         }
 
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
         /* Animations */
         @keyframes pulse {
             0%, 100% { opacity: 1; }
@@ -553,6 +601,10 @@
             .stats-grid {
                 grid-template-columns: 1fr;
             }
+
+            .quick-actions {
+                justify-content: center;
+            }
         }
 
         @media (max-width: 480px) {
@@ -568,6 +620,11 @@
 
             .profile-name {
                 font-size: 1.8rem;
+            }
+
+            .message-button {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -622,6 +679,20 @@
                             На сайте с {{ profile_user.registration_date.strftime('%d.%m.%Y') if profile_user.registration_date else 'Неизвестно' }}
                         </div>
                     </div>
+
+                    <!-- Кнопка "Написать сообщение" - в шапке профиля -->
+                    {% if can_message and current_user and current_user.id != profile_user.id %}
+                    <div class="quick-actions" style="margin-top: 1.5rem;">
+                        <a href="/messages/{{ profile_user.id }}" class="message-button">
+                            <i class="fas fa-comments"></i>
+                            Написать сообщение
+                        </a>
+                        <a href="/messages/{{ profile_user.id }}" class="message-button message-button-outline">
+                            <i class="fas fa-handshake"></i>
+                            Обсудить обмен
+                        </a>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -666,10 +737,19 @@
 
         <!-- Active Offers -->
         <div class="offers-section fade-in">
-            <h2 class="section-title">
-                <i class="fas fa-list-alt"></i>
-                Активные объявления
-            </h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 class="section-title" style="margin-bottom: 0;">
+                    <i class="fas fa-list-alt"></i>
+                    Активные объявления
+                </h2>
+                
+                {% if can_message and current_user and current_user.id != profile_user.id %}
+                <a href="/messages/{{ profile_user.id }}" class="message-button message-button-small">
+                    <i class="fas fa-comment"></i>
+                    Обсудить объявления
+                </a>
+                {% endif %}
+            </div>
             
             {% if offers %}
             <div class="offers-grid">
@@ -696,10 +776,21 @@
                             <div class="offer-text">{{ offer['get'] }}</div>
                         </div>
                     </div>
-                    <a href="/offer/{{ offer.id }}" class="view-offer-btn">
-                        <i class="fas fa-eye"></i>
-                        Посмотреть объявление
-                    </a>
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <a href="/offer/{{ offer.id }}" class="view-offer-btn">
+                            <i class="fas fa-eye"></i>
+                            Посмотреть объявление
+                        </a>
+                        
+                        {% if can_message and current_user and current_user.id != profile_user.id %}
+                        <a href="/messages/{{ profile_user.id }}?offer_id={{ offer.id }}" 
+                           class="view-offer-btn" 
+                           style="background: var(--secondary);">
+                            <i class="fas fa-comment"></i>
+                            Обсудить это объявление
+                        </a>
+                        {% endif %}
+                    </div>
                 </div>
                 {% endfor %}
             </div>
@@ -707,6 +798,15 @@
             <div class="empty-state">
                 <div class="empty-icon">📝</div>
                 <div class="empty-text">У пользователя пока нет активных объявлений</div>
+                
+                {% if can_message and current_user and current_user.id != profile_user.id %}
+                <div style="margin-top: 1.5rem;">
+                    <a href="/messages/{{ profile_user.id }}" class="message-button">
+                        <i class="fas fa-comments"></i>
+                        Написать пользователю
+                    </a>
+                </div>
+                {% endif %}
             </div>
             {% endif %}
         </div>
@@ -714,10 +814,19 @@
         <!-- Rating Form (only if current user is logged in and not viewing own profile) -->
         {% if current_user and current_user.id != profile_user.id %}
         <div class="rating-section fade-in">
-            <h2 class="section-title">
-                <i class="fas fa-star"></i>
-                {% if has_rated %}Изменить оценку{% else %}Оценить пользователя{% endif %}
-            </h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 class="section-title" style="margin-bottom: 0;">
+                    <i class="fas fa-star"></i>
+                    {% if has_rated %}Изменить оценку{% else %}Оценить пользователя{% endif %}
+                </h2>
+                
+                {% if can_message %}
+                <a href="/messages/{{ profile_user.id }}" class="message-button message-button-small">
+                    <i class="fas fa-comments"></i>
+                    Написать сообщение
+                </a>
+                {% endif %}
+            </div>
             
             <form id="ratingForm" class="rating-form" onsubmit="submitRating(event)">
                 <input type="hidden" name="target_user_id" value="{{ profile_user.id }}">
@@ -735,10 +844,21 @@
                 <textarea name="comment" id="comment" class="comment-input" 
                           placeholder="Ваш отзыв о пользователе (необязательно)">{{ comment or '' }}</textarea>
                 
-                <button type="submit" class="submit-btn">
-                    <i class="fas fa-paper-plane"></i>
-                    {% if has_rated %}Обновить оценку{% else %}Отправить оценку{% endif %}
-                </button>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <button type="submit" class="submit-btn" style="flex: 1;">
+                        <i class="fas fa-paper-plane"></i>
+                        {% if has_rated %}Обновить оценку{% else %}Отправить оценку{% endif %}
+                    </button>
+                    
+                    {% if can_message %}
+                    <a href="/messages/{{ profile_user.id }}" 
+                       class="message-button message-button-outline" 
+                       style="flex: 1; text-align: center; padding: 1rem 1.5rem;">
+                        <i class="fas fa-comment-dots"></i>
+                        Написать
+                    </a>
+                    {% endif %}
+                </div>
                 
                 {% if has_rated %}
                 <div class="rating-info">
@@ -753,10 +873,19 @@
         <!-- Recent Reviews -->
         {% if recent_reviews %}
         <div class="reviews-section fade-in">
-            <h2 class="section-title">
-                <i class="fas fa-comments"></i>
-                Последние отзывы
-            </h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 class="section-title" style="margin-bottom: 0;">
+                    <i class="fas fa-comments"></i>
+                    Последние отзывы
+                </h2>
+                
+                {% if can_message and current_user and current_user.id != profile_user.id %}
+                <a href="/messages/{{ profile_user.id }}" class="message-button message-button-small">
+                    <i class="fas fa-pen"></i>
+                    Оставить отзыв
+                </a>
+                {% endif %}
+            </div>
             
             {% for review in recent_reviews %}
             <div class="review-card">
@@ -788,6 +917,18 @@
                 {% endif %}
             </div>
             {% endfor %}
+            
+            {% if can_message and current_user and current_user.id != profile_user.id %}
+            <div style="text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e2e8f0;">
+                <p style="color: var(--text-light); margin-bottom: 1rem;">
+                    Хотите задать вопрос перед тем как оставить отзыв?
+                </p>
+                <a href="/messages/{{ profile_user.id }}" class="message-button">
+                    <i class="fas fa-question-circle"></i>
+                    Спросить пользователя
+                </a>
+            </div>
+            {% endif %}
         </div>
         {% endif %}
     </div>
@@ -874,6 +1015,30 @@
             el.style.transform = 'translateY(20px)';
             el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
             fadeInOnScroll.observe(el);
+        });
+
+        // Уведомление о возможности обсуждения
+        document.addEventListener('DOMContentLoaded', function() {
+            {% if can_message and current_user and current_user.id != profile_user.id %}
+            // Можно добавить всплывающую подсказку при наведении на кнопку обсуждения
+            const messageButtons = document.querySelectorAll('.message-button');
+            messageButtons.forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-3px) scale(1.02)';
+                });
+                btn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+            
+            // Автоматическое выделение текста в текстовом поле при фокусе
+            const commentInput = document.getElementById('comment');
+            if (commentInput) {
+                commentInput.addEventListener('focus', function() {
+                    this.select();
+                });
+            }
+            {% endif %}
         });
     </script>
 </body>
