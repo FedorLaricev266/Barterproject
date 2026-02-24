@@ -9,7 +9,7 @@ import json
 
 from database import db
 
-SECRET_KEY = "super_secret_key_123"
+SECRET_KEY = os.getenv("SECRET_KEY", "change-me-in-railway")
 serializer = URLSafeTimedSerializer(SECRET_KEY)
 
 

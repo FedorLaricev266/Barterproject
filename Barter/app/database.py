@@ -1,22 +1,33 @@
+import os
+from urllib.parse import urlparse
 import mysql.connector
 from mysql.connector import Error
-import os
+
 
 class Database:
     def __init__(self):
-        self.host = 'localhost'
-        self.database = 'exchange_db'
-        self.user = 'exchange_user'
-        self.password = 'exchange_password'
-        self.port = 3306
-    
+        self.host = os.getenv("MYSQLHOST", os.getenv("DB_HOST", "localhost"))
+        self.database = os.getenv("MYSQLDATABASE", os.getenv("DB_NAME", "exchange_db"))
+        self.user = os.getenv("MYSQLUSER", os.getenv("DB_USER", "exchange_user"))
+        self.password = os.getenv("MYSQLPASSWORD", os.getenv("DB_PASSWORD", "exchange_password"))
+        self.port = int(os.getenv("MYSQLPORT", os.getenv("DB_PORT", "3306")))
+
+        # Поддержка DATABASE_URL / MYSQL_URL (mysql://user:pass@host:port/db)
+        db_url = os.getenv("DATABASE_URL") or os.getenv("MYSQL_URL")
+        if db_url:
+            self._load_from_url(db_url)
+
+    def _load_from_url(self, db_url: str):
+        parsed = urlparse(db_url)
+        if parsed.scheme.startswith("mysql"):
+            self.host = parsed.hostname or self.host
+            self.port = parsed.port or self.port
+            self.user = parsed.username or self.user
+            self.password = parsed.password or self.password
+            self.database = (parsed.path or "/").lstrip("/") or self.database
+
     def get_connection(self):
         try:
-            print(f"Подключаюсь к MySQL...")
-            print(f"Хост: {self.host}:{self.port}")
-            print(f"База: {self.database}")
-            print(f"Пользователь: {self.user}")
-            
             connection = mysql.connector.connect(
                 host=self.host,
                 database=self.database,
@@ -25,35 +36,26 @@ class Database:
                 port=self.port,
                 auth_plugin='mysql_native_password'
             )
-            print("Успешное подключение к БД!")
             return connection
         except Error as e:
-            print(f"Ошибка подключения: {e}")
-            print("Возможные проблемы:")
-            print("1. Неправильный пароль")
-            print("2. Пользователь не существует")
-            print("3. База данных не существует")
-            print("4. MySQL сервер не запущен")
+            print(f"Ошибка подключения к БД: {e}")
             return None
-    
+
     def execute_query(self, query, params=None, fetch=False):
         connection = self.get_connection()
         if connection is None:
-            print("Не могу выполнить запрос - нет подключения")
             return None
-        
+
         try:
             cursor = connection.cursor(dictionary=True)
             cursor.execute(query, params or ())
-            
+
             if fetch:
                 result = cursor.fetchall()
-                print(f"Запрос выполнен, строк: {len(result)}")
             else:
                 connection.commit()
                 result = cursor.lastrowid
-                print(f"Запрос выполнен, ID: {result}")
-            
+
             cursor.close()
             return result
         except Error as e:
@@ -63,5 +65,6 @@ class Database:
         finally:
             if connection.is_connected():
                 connection.close()
+
 
 db = Database()
